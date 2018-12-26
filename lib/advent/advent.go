@@ -41,7 +41,7 @@ func Inputs(year, day int) <-chan Input {
 
 			cache, err := ioutil.ReadFile(ckey)
 			if err == nil {
-				fmt.Println("cached", ckey)
+				//fmt.Println("cached", ckey)
 				ch <- Input{Name: m, Val: string(cache), Cached: true}
 				continue
 			}
