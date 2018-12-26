@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"metalim/advent/2017/lib/numbers"
-	"metalim/advent/2017/lib/parse"
+	"metalim/advent/2017/lib/source"
 
 	. "github.com/logrusorgru/aurora"
 )
@@ -17,7 +17,7 @@ var test2 = `5 9 2 8
 3 8 6 5`
 
 func main() {
-	for p := range parse.Tests(1, test1).Tests(2, test2).Advent(2017, 2) {
+	for p := range source.Test(1, test1, `18`).Test(2, test2, `9`).Advent(2017, 2) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssn := p.Lines().Ints()
 		if p.Part(1) {
@@ -26,7 +26,7 @@ func main() {
 				min, max := numbers.MinMax(l)
 				sum += max - min
 			}
-			fmt.Println("part 1:", Green(sum))
+			p.SubmitInt1(sum)
 		}
 		if p.Part(2) {
 			var sum int
@@ -41,7 +41,7 @@ func main() {
 					}
 				}
 			}
-			fmt.Println("part 2:", Green(sum))
+			p.SubmitInt2(sum)
 		}
 	}
 }

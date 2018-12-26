@@ -1,4 +1,5 @@
-extras/*_session.txt
-get_advent
 test/
+extras/*.cookie
 inputs/*.cookie
+results/*.cookie
+get_advent
