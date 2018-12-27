@@ -20,14 +20,16 @@ func main() {
 	for p := range source.Test(1, test1, `18`).Test(2, test2, `9`).Advent(2017, 2) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssn := p.Lines().Ints()
+
 		if p.Part(1) {
 			var sum int
 			for _, l := range ssn {
 				min, max := numbers.MinMax(l)
 				sum += max - min
 			}
-			p.SubmitInt1(sum)
+			p.SubmitInt(1, sum)
 		}
+
 		if p.Part(2) {
 			var sum int
 			for _, l := range ssn {
@@ -41,7 +43,7 @@ func main() {
 					}
 				}
 			}
-			p.SubmitInt2(sum)
+			p.SubmitInt(2, sum)
 		}
 	}
 }

@@ -21,11 +21,13 @@ func main() {
 				sum2 += int(in[i] - '0')
 			}
 		}
+
 		if p.Part(1) {
-			p.SubmitInt1(sum1)
+			p.SubmitInt(1, sum1)
 		}
+
 		if p.Part(2) {
-			p.SubmitInt2(sum2)
+			p.SubmitInt(2, sum2)
 		}
 	}
 }

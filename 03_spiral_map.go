@@ -37,6 +37,7 @@ func main() {
 		fmt.Println(Brown("\n" + in.Name))
 		n := in.Ints()[0]
 		fmt.Println(Black(n).Bold())
+
 		if in.Part(1) {
 			f := map2d{}
 			p := walkSpiral(&f, func(i int, p field.Pos) bool {
@@ -46,6 +47,7 @@ func main() {
 			})
 			in.SubmitInt(1, field.Manh(p, field.Pos{}))
 		}
+
 		if in.Part(2) {
 			f := map2d{}
 			p := walkSpiral(&f, func(i int, p field.Pos) bool {

@@ -28,6 +28,7 @@ func main() {
 			}
 			p.SubmitInt(1, steps)
 		}
+
 		if p.Part(2) {
 			sn := p.Ints()
 			var i, steps int

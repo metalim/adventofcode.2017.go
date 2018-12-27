@@ -14,6 +14,14 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
+var dry = false
+
+// Dry run.
+func Dry() {
+	fmt.Println(Magenta("Dry run."))
+	dry = true
+}
+
 // Input values.
 type Input struct {
 	Name, Val string
@@ -77,40 +85,17 @@ func (p Parser) Result(part int, v string) {
 	fmt.Println(prefix, Green(v))
 }
 
-// ResultInt without submitting.
-func (p Parser) ResultInt(part, n int) {
-	p.Result(part, strconv.Itoa(n))
-}
-
 // Submit result.
 func (p Parser) Submit(part int, v string) {
 	p.Result(part, v)
-	trySubmit(p.Name, p.year, p.day, part, v)
+	if !dry {
+		trySubmit(p.Name, p.year, p.day, part, v)
+	}
 }
 
 // SubmitInt result.
 func (p Parser) SubmitInt(part, n int) {
 	p.Submit(part, strconv.Itoa(n))
-}
-
-// Submit1 part 1.
-func (p Parser) Submit1(v string) {
-	p.Submit(1, v)
-}
-
-// Submit2 part 2.
-func (p Parser) Submit2(v string) {
-	p.Submit(2, v)
-}
-
-// SubmitInt1 part 1.
-func (p Parser) SubmitInt1(n int) {
-	p.Submit(1, strconv.Itoa(n))
-}
-
-// SubmitInt2 part 2.
-func (p Parser) SubmitInt2(n int) {
-	p.Submit(2, strconv.Itoa(n))
 }
 
 ////////////////////////////////////////////////////////////////////////

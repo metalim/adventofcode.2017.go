@@ -17,6 +17,7 @@ func main() {
 		fmt.Println(Brown("\n" + p.Name))
 		ssw := p.Lines().Words()
 		fmt.Println(len(ssw), "lines", Black(ssw[0]).Bold())
+
 		if p.Part(1) {
 			var count int
 		LINES:
@@ -32,6 +33,7 @@ func main() {
 			}
 			p.SubmitInt(1, count)
 		}
+
 		if p.Part(2) {
 			var count int
 		LINES2:
