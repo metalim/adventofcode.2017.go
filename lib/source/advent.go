@@ -182,6 +182,10 @@ func getInputs(year, day int) <-chan Parser {
 	return ch
 }
 
+var lastSubmit time.Time
+
+const submitThrottle time.Duration = 5 * time.Second
+
 func trySubmit(name string, year, day, part int, v string) {
 	ckey := fmt.Sprintf("results/%d_%d_%d_%s.txt", year, day, part, name)
 	result, err := ioutil.ReadFile(ckey)
@@ -197,8 +201,13 @@ func trySubmit(name string, year, day, part int, v string) {
 	}
 
 	urlPost := fmt.Sprintf("https://adventofcode.com/%d/day/%d/answer", year, day)
-	fmt.Println("submitting to:", urlPost, string(cookie))
+	fmt.Println("submitting to:", urlPost, "for", name)
 
+	wait := submitThrottle - time.Since(lastSubmit)
+	if wait > 0 {
+		fmt.Println("waiting", Cyan(wait))
+		time.Sleep(wait)
+	}
 	data := url.Values{}
 	data.Set("level", strconv.Itoa(part))
 	data.Set("answer", v)
@@ -221,6 +230,8 @@ func trySubmit(name string, year, day, part int, v string) {
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		panic(resp.Status)
 	}
+
+	lastSubmit = time.Now()
 
 	fmt.Println("status:", resp.Status)
 	buf, err := ioutil.ReadAll(resp.Body)

@@ -57,3 +57,13 @@ func (p ParserSplit) Ints() [][]int {
 	}
 	return out
 }
+
+// Words from []string.
+func (p ParserSplit) Words() [][]string {
+	out := make([][]string, 0, len(p.Values))
+	for _, l := range p.Values {
+		ss := strings.Split(l, " ")
+		out = append(out, ss)
+	}
+	return out
+}
