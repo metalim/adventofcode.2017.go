@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -224,16 +225,34 @@ func trySubmit(name string, year, day, part int, v string) {
 	fmt.Println("status:", resp.Status)
 	buf, err := ioutil.ReadAll(resp.Body)
 	check(err)
-	body := string(buf)
-	if strings.Contains(body, "<article><p>You don't seem to be solving the right level.") {
+	html := string(buf)
+	reg := regexp.MustCompile("(?s)<main>\\s*<article><p>(.*)</p></article>\\s*</main>")
+	m := reg.FindStringSubmatch(html)
+	main := html
+	if len(m) > 1 {
+		main = m[1]
+		fmt.Println("submatch:", main)
+	}
+	if strings.Contains(main, "You don't seem to be solving the right level.") {
 		fmt.Println("Already submitted.")
 		ioutil.WriteFile(ckey, []byte("Unknown value"), 600)
 		return
 	}
-	if strings.Contains(body, "<article><p>That's not the right answer.") {
-		fmt.Println(Red("Incorrect answer."))
-		ioutil.WriteFile(ckey+".err.txt", buf, 600)
+	if strings.Contains(main, "That's the right answer!") {
+		fmt.Println(Green("Correct answer."))
+		ioutil.WriteFile(ckey, []byte(v), 600)
 		return
 	}
-	fmt.Println("body:", string(buf))
+	if strings.Contains(main, "That's not the right answer.") {
+		fmt.Println(Red("Incorrect answer."))
+		ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+		return
+	}
+	if strings.Contains(main, "You gave an answer too recently;") {
+		fmt.Println(Brown("Submitting too soon. Wait some more."))
+		ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+		return
+	}
+	ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+	fmt.Println("main:", main)
 }
