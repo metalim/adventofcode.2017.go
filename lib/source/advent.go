@@ -254,8 +254,13 @@ func trySubmit(name string, year, day, part int, v string) {
 		ioutil.WriteFile(ckey, []byte(v), 600)
 		return
 	}
-	if strings.Contains(main, "That's not the right answer.") {
+	if strings.Contains(main, "That's not the right answer") {
 		fmt.Println(Red("Incorrect answer."))
+		if strings.Contains(main, "your answer is too low") {
+			fmt.Println(Red("- too low."))
+		} else if strings.Contains(main, "your answer is too high") {
+			fmt.Println(Red("- too high."))
+		}
 		ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
 		return
 	}
