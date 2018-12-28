@@ -67,3 +67,20 @@ func (p ParserSplit) Words() [][]string {
 	}
 	return out
 }
+
+// WordsTrim trims characters. WordsTrim("(),")
+func (p ParserSplit) WordsTrim(trim string) [][]string {
+	out := make([][]string, 0, len(p.Values))
+	for _, l := range p.Values {
+		out = append(out, wordsTrim(l, trim))
+	}
+	return out
+}
+
+func wordsTrim(l string, trim string) []string {
+	ss := strings.Split(l, " ")
+	for i, s := range ss {
+		ss[i] = strings.Trim(s, trim)
+	}
+	return ss
+}
