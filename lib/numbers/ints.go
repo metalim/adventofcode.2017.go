@@ -1,5 +1,10 @@
 package numbers
 
+import (
+	"strconv"
+	"strings"
+)
+
 // MinMax values of []int.
 func MinMax(sn []int) (min, max int) {
 	if len(sn) == 0 {
@@ -16,4 +21,14 @@ func MinMax(sn []int) (min, max int) {
 		}
 	}
 	return
+}
+
+// Join numbers into a string.
+func Join(sn []int, sep string) string {
+	var out strings.Builder
+	for _, n := range sn {
+		out.WriteString(strconv.Itoa(n))
+		out.WriteString(sep)
+	}
+	return out.String()
 }

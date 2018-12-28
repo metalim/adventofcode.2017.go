@@ -4,22 +4,11 @@ import (
 	"fmt"
 	"metalim/advent/2017/lib/numbers"
 	"metalim/advent/2017/lib/source"
-	"strconv"
-	"strings"
 
 	. "github.com/logrusorgru/aurora"
 )
 
 var test1 = `0 2 7 0`
-
-func key(sn []int) string {
-	var out strings.Builder
-	for _, n := range sn {
-		out.WriteString(strconv.Itoa(n))
-		out.WriteRune(':')
-	}
-	return out.String()
-}
 
 func main() {
 	// source.Dry()
@@ -30,9 +19,9 @@ func main() {
 
 		seen := map[string]int{}
 		var step int
-		for seen[key(sn)] == 0 {
+		for seen[numbers.Join(sn, ":")] == 0 {
+			seen[numbers.Join(sn, ":")] = step
 			step++
-			seen[key(sn)] = step
 			_, max := numbers.MinMax(sn)
 			var i, n int
 			for i, n = range sn {
@@ -52,7 +41,7 @@ func main() {
 		}
 
 		if p.Part(2) {
-			p.SubmitInt(2, 1+step-seen[key(sn)])
+			p.SubmitInt(2, step-seen[numbers.Join(sn, ":")])
 		}
 	}
 }
