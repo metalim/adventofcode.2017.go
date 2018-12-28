@@ -15,8 +15,8 @@ func main() {
 	source.Dry()
 	for p := range source.Test(1, test1, `11`).Test(2, test2, `22`).Advent(2017, 99) {
 		fmt.Println(Brown("\n" + p.Name))
-		ssn := p.Lines().Ints()
-		fmt.Println(Black(ssn).Bold())
+		ssw := p.Lines().Words()
+		fmt.Println(len(ssw), Black(ssw[0]).Bold())
 
 		if p.Part(1) {
 			p.SubmitInt(1, 1)
