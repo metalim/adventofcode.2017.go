@@ -227,7 +227,6 @@ func trySubmit(name string, year, day, part int, v string) {
 	main := html
 	if len(m) > 1 {
 		main = m[1]
-		fmt.Println("submatch:", main)
 	}
 	if strings.Contains(main, "You don't seem to be solving the right level.") {
 		fmt.Println("Already submitted.")
