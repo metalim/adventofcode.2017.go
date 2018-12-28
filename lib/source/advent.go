@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -117,24 +118,24 @@ func getInputs(year, day int) <-chan Parser {
 		c := &http.Client{Timeout: 10 * time.Second}
 		ms, err := filepath.Glob("inputs/*.cookie")
 		check(err)
-		for _, m := range ms {
-			cookie, err := ioutil.ReadFile(m)
+		for _, name := range ms {
+			cookie, err := ioutil.ReadFile(name)
 			check(err)
 
-			m = filepath.Base(m)
-			iext := len(m) - len(filepath.Ext(m))
-			m = m[:iext]
+			name = filepath.Base(name)
+			iext := len(name) - len(filepath.Ext(name))
+			name = name[:iext]
 
-			ckey := fmt.Sprintf("inputs/%d_%d_%s.txt", year, day, m)
+			inkey := fmt.Sprintf("inputs/%d_%d_%s.txt", year, day, name)
 
-			cache, err := ioutil.ReadFile(ckey)
+			cache, err := ioutil.ReadFile(inkey)
 			if err == nil {
-				//fmt.Println("cached", ckey)
-				ch <- Parser{Input{Name: m, Val: string(cache), parts: 1 + 2, year: year, day: day}}
+				//fmt.Println("cached", inkey)
+				ch <- Parser{Input{Name: name, Val: string(cache), parts: 1 + 2, year: year, day: day}}
 				continue
 			}
 
-			fmt.Println("downloading", m, "from", urlGet)
+			fmt.Println("downloading", name, "from", urlGet)
 			req, err := http.NewRequest("GET", urlGet, nil)
 			req.AddCookie(&http.Cookie{
 				Name:   "session",
@@ -157,10 +158,10 @@ func getInputs(year, day int) <-chan Parser {
 				buf = buf[:len(buf)-1]
 			}
 
-			err = ioutil.WriteFile(ckey, buf, 600)
+			err = ioutil.WriteFile(inkey, buf, 600)
 			check(err)
 
-			ch <- Parser{Input{Name: m, Val: string(buf), parts: 1 + 2, year: year, day: day}}
+			ch <- Parser{Input{Name: name, Val: string(buf), parts: 1 + 2, year: year, day: day}}
 		}
 		close(ch)
 	}()
@@ -172,10 +173,17 @@ var lastSubmit time.Time
 const submitThrottle time.Duration = 5 * time.Second
 
 func trySubmit(name string, year, day, part int, v string) {
-	ckey := fmt.Sprintf("results/%d_%d_%d_%s.txt", year, day, part, name)
-	result, err := ioutil.ReadFile(ckey)
+	inkey := fmt.Sprintf("inputs/%d_%d_%s.txt", year, day, name)
+	outkey := fmt.Sprintf("results/%d_%d_%d_%s.txt", year, day, part, name)
+	result, err := ioutil.ReadFile(outkey)
 	if err == nil {
-		fmt.Println("already submitted:", Green(string(result)))
+		fmt.Print("already submitted: ", Green(string(result)))
+		infi, err1 := os.Stat(inkey)
+		outfi, err2 := os.Stat(outkey)
+		if err1 == nil && err2 == nil {
+			fmt.Print(" It took ", Brown(outfi.ModTime().Sub(infi.ModTime()).Round(time.Second)))
+		}
+		fmt.Println()
 		return
 	}
 
@@ -228,16 +236,23 @@ func trySubmit(name string, year, day, part int, v string) {
 	if len(m) > 1 {
 		main = m[1]
 	}
+
 	if strings.Contains(main, "You don't seem to be solving the right level.") {
 		fmt.Println("Already submitted.")
-		ioutil.WriteFile(ckey, []byte("Unknown value"), 600)
+		ioutil.WriteFile(outkey, []byte("Unknown value"), 600)
 		return
 	}
+
 	if strings.Contains(main, "That's the right answer!") {
 		fmt.Println(Green("Correct answer."))
-		ioutil.WriteFile(ckey, []byte(v), 600)
+		ioutil.WriteFile(outkey, []byte(v), 600)
+		fi, err := os.Stat(inkey)
+		if err == nil {
+			fmt.Println("It took", Brown(time.Since(fi.ModTime()).Round(time.Second)))
+		}
 		return
 	}
+
 	if strings.Contains(main, "That's not the right answer") {
 		fmt.Println(Red("Incorrect answer."))
 		if strings.Contains(main, "your answer is too low") {
@@ -245,14 +260,17 @@ func trySubmit(name string, year, day, part int, v string) {
 		} else if strings.Contains(main, "your answer is too high") {
 			fmt.Println(Red("- too high."))
 		}
-		ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+		ioutil.WriteFile(outkey+".err.txt", []byte(main), 600)
 		return
 	}
+
 	if strings.Contains(main, "You gave an answer too recently;") {
 		fmt.Println(Brown("Submitting too soon. Wait some more."))
-		ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+		ioutil.WriteFile(outkey+".err.txt", []byte(main), 600)
 		return
 	}
-	ioutil.WriteFile(ckey+".err.txt", []byte(main), 600)
+
+	// some unknown response.
+	ioutil.WriteFile(outkey+".err.txt", []byte(main), 600)
 	fmt.Println("main:", main)
 }
