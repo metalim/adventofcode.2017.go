@@ -32,3 +32,9 @@ func Join(sn []int, sep string) string {
 	}
 	return out.String()
 }
+
+// Abs value.
+func Abs(n int) int {
+	y := n >> 63       // y ← x ⟫ 63
+	return (n ^ y) - y // (x ⨁ y) - y
+}
