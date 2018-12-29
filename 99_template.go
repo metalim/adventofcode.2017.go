@@ -14,6 +14,7 @@ func main() {
 	source.Dry()
 
 	var ins source.Inputs
+
 	ins = ins.Test(1, test1, `11`)
 	ins = ins.Test(2, test2, `22`)
 

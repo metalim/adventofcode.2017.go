@@ -14,7 +14,12 @@ var test1 = `0
 -3`
 
 func main() {
-	for p := range source.Test(1, test1, `5`).Test(2, test1, `10`).Advent(2017, 5) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `5`)
+	ins = ins.Test(2, test1, `10`)
+
+	for p := range ins.Advent(2017, 5) {
 		fmt.Println(Brown("\n" + p.Name))
 
 		if p.Part(1) {

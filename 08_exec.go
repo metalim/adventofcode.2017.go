@@ -13,9 +13,10 @@ a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10`
 
-// 1   2     4  5  6
-
-var test2 = ``
+/*
+0  1   2  -  4  5  6
+c inc -20 if c == 10`
+*/
 
 type regs map[string]int
 type comp func(rs regs, r string, v int) bool
@@ -36,7 +37,12 @@ var ops = map[string]op{
 }
 
 func main() {
-	for p := range source.Test(1, test1, `1`).Test(2, test1, `10`).Advent(2017, 8) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `1`)
+	ins = ins.Test(2, test1, `10`)
+
+	for p := range ins.Advent(2017, 8) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssw := p.Lines().Words()
 		fmt.Println(len(ssw), Black(ssw[0]).Bold())

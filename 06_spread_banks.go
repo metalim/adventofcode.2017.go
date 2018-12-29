@@ -11,8 +11,12 @@ import (
 var test1 = `0 2 7 0`
 
 func main() {
-	// source.Dry()
-	for p := range source.Test(1, test1, `5`).Test(2, test1, `4`).Advent(2017, 6) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `5`)
+	ins = ins.Test(2, test1, `4`)
+
+	for p := range ins.Advent(2017, 6) {
 		fmt.Println(Brown("\n" + p.Name))
 		sn := p.Ints()
 		fmt.Println(Black(sn).Bold())

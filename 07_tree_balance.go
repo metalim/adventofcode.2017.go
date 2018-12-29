@@ -48,7 +48,12 @@ func calc(n *node) int {
 }
 
 func main() {
-	for p := range source.Test(1, test1, `tknk`).Test(2, test1, `60`).Advent(2017, 7) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `tknk`)
+	ins = ins.Test(2, test1, `60`)
+
+	for p := range ins.Advent(2017, 7) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssw := p.Lines().WordsTrim("()->, ")
 		fmt.Println(len(ssw), Black(ssw[0]).Bold())

@@ -8,12 +8,14 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
-var test1 = `aa bb cc dd aa`
-var test2 = `aa bb cc dd aaa`
-var test3 = `abcde xyz ecdab`
-
 func main() {
-	for p := range source.Test(1, test1, `0`).Test(1, test2, `1`).Test(2, test3, `0`).Advent(2017, 4) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, `aa bb cc dd aa`, `0`)
+	ins = ins.Test(1, `aa bb cc dd aaa`, `1`)
+	ins = ins.Test(2, `abcde xyz ecdab`, `0`)
+
+	for p := range ins.Advent(2017, 4) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssw := p.Lines().Words()
 		fmt.Println(len(ssw), "lines", Black(ssw[0]).Bold())

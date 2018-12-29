@@ -9,12 +9,13 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
-var test1 = `3, 4, 1, 5`
-
 func main() {
-	ins := source.Test(1, test1, `12`)
+	var ins source.Inputs
+
+	ins = ins.Test(1, `3, 4, 1, 5`, `12`)
 	ins = ins.Test(2, "", `a2582a3a0e66e6e86e3812dcb672a272`)
 	ins = ins.Test(2, "AoC 2017", "33efeb34ea91902bb2f59c9920caa6cd")
+
 	for p := range ins.Advent(2017, 10) {
 		fmt.Println(Brown("\n" + p.Name))
 		fmt.Println(Black(p.Val).Bold())

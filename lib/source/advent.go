@@ -44,7 +44,7 @@ func (ins Inputs) Test(part int, in string, ex ...string) Inputs {
 	if part&1 == 0 { // test for part 2 only.
 		ex = append([]string{""}, ex...)
 	}
-	return append(ins, Input{Name: "test" + strconv.Itoa(len(ins)), Val: in, parts: part, ex: ex})
+	return append(ins, Input{Name: "test" + strconv.Itoa(1+len(ins)), Val: in, parts: part, ex: ex})
 }
 
 // Advent sources.

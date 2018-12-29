@@ -8,7 +8,12 @@ import (
 )
 
 func main() {
-	for p := range source.Test(1, `91212129`, `9`).Test(2, `12131415`, `4`).Advent(2017, 1) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, `91212129`, `9`)
+	ins = ins.Test(2, `12131415`, `4`)
+
+	for p := range ins.Advent(2017, 1) {
 		fmt.Println(Brown("\n" + p.Name))
 		in := p.Val
 

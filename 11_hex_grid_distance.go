@@ -8,15 +8,14 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
-var test1 = `ne,ne,sw,sw`
-var test2 = `se,sw,se,sw,sw`
-
 var abs = numbers.Abs
 
 func main() {
-	// source.Dry()
-	ins := source.Test(1, test1, `0`)
-	ins = ins.Test(1, test2, `3`)
+	var ins source.Inputs
+
+	ins = ins.Test(1, `ne,ne,sw,sw`, `0`)
+	ins = ins.Test(1, `se,sw,se,sw,sw`, `3`)
+
 	for par := range ins.Advent(2017, 11) {
 		fmt.Println(Brown("\n" + par.Name))
 		sw := par.Lines().Split(",").Values

@@ -33,7 +33,13 @@ func walkSpiral(f field.Field, fn func(int, field.Pos) bool) field.Pos {
 }
 
 func main() {
-	for in := range source.Test(1, `23`, `2`).Test(1, `1024`, `31`).Test(2, `60`, `122`).Advent(2017, 3) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, `23`, `2`)
+	ins = ins.Test(1, `1024`, `31`)
+	ins = ins.Test(2, `60`, `122`)
+
+	for in := range ins.Advent(2017, 3) {
 		fmt.Println(Brown("\n" + in.Name))
 		n := in.Ints()[0]
 		fmt.Println(Black(n).Bold())

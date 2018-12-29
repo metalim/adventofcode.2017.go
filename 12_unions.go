@@ -16,12 +16,12 @@ var test1 = `0 <-> 2
 5 <-> 6
 6 <-> 4, 5`
 
-var test2 = ``
-
 func main() {
-	// source.Dry()
-	ins := source.Test(1, test1, `6`)
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `6`)
 	ins = ins.Test(2, test1, `2`)
+
 	for p := range ins.Advent(2017, 12) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssn := p.Lines().Ints()

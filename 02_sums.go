@@ -17,7 +17,12 @@ var test2 = `5 9 2 8
 3 8 6 5`
 
 func main() {
-	for p := range source.Test(1, test1, `18`).Test(2, test2, `9`).Advent(2017, 2) {
+	var ins source.Inputs
+
+	ins = ins.Test(1, test1, `18`)
+	ins = ins.Test(2, test2, `9`)
+
+	for p := range ins.Advent(2017, 2) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssn := p.Lines().Ints()
 
