@@ -9,6 +9,45 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
+func knotHash(s string) string {
+	sn := []byte(s)
+	sn = append(sn, 17, 31, 73, 47, 23)
+
+	length := 256
+	list := make([]byte, length)
+	for i := range list {
+		list[i] = byte(i)
+	}
+
+	var pos, skip int
+	for round := 0; round < 64; round++ {
+		for _, n := range sn {
+			// reverse
+			for i := 0; i < int(n/2); i++ {
+				a := (pos + i) % length
+				b := (pos + int(n) - 1 - i) % length
+				list[a], list[b] = list[b], list[a]
+			}
+			pos = (pos + int(n) + skip) % length
+			skip++
+		}
+	}
+
+	// sparse -> dense
+	var hash strings.Builder
+	for i := 0; i < 16; i++ {
+		var xor byte
+		for _, j := range list[i*16 : i*16+16] {
+			xor ^= j
+		}
+		if xor < 16 {
+			hash.WriteRune('0')
+		}
+		hash.WriteString(strconv.FormatInt(int64(xor), 16))
+	}
+	return hash.String()
+}
+
 func main() {
 	var ins source.Inputs
 
@@ -49,43 +88,8 @@ func main() {
 		}
 
 		if p.Part(2) {
-			sn := []byte(p.Val)
-			sn = append(sn, 17, 31, 73, 47, 23)
-
-			length := 256
-			list := make([]byte, length)
-			for i := range list {
-				list[i] = byte(i)
-			}
-
-			var pos, skip int
-			for round := 0; round < 64; round++ {
-				for _, n := range sn {
-					// reverse
-					for i := 0; i < int(n/2); i++ {
-						a := (pos + i) % length
-						b := (pos + int(n) - 1 - i) % length
-						list[a], list[b] = list[b], list[a]
-					}
-					pos = (pos + int(n) + skip) % length
-					skip++
-				}
-			}
-
-			// sparse -> dense
-			var hash strings.Builder
-			for i := 0; i < 16; i++ {
-				var xor byte
-				for _, j := range list[i*16 : i*16+16] {
-					xor ^= j
-				}
-				if xor < 16 {
-					hash.WriteRune('0')
-				}
-				hash.WriteString(strconv.FormatInt(int64(xor), 16))
-			}
-
-			p.Submit(2, hash.String())
+			p.Submit(2, knotHash(p.Val))
 		}
+
 	}
 }
