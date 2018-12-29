@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"metalim/advent/2017/lib/source"
-	"strconv"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
@@ -13,8 +13,8 @@ func knotHash(s string) string {
 	sn := []byte(s)
 	sn = append(sn, 17, 31, 73, 47, 23)
 
-	length := 256
-	list := make([]byte, length)
+	const dim = 256
+	var list [dim]byte
 	for i := range list {
 		list[i] = byte(i)
 	}
@@ -22,30 +22,24 @@ func knotHash(s string) string {
 	var pos, skip int
 	for round := 0; round < 64; round++ {
 		for _, n := range sn {
-			// reverse
-			for i := 0; i < int(n/2); i++ {
-				a := (pos + i) % length
-				b := (pos + int(n) - 1 - i) % length
+			for i := 0; i < int(n/2); i++ { // reverse chunk of circle.
+				a := (pos + i) % dim
+				b := (pos + int(n) - 1 - i) % dim
 				list[a], list[b] = list[b], list[a]
 			}
-			pos = (pos + int(n) + skip) % length
+			pos = (pos + int(n) + skip) % dim
 			skip++
 		}
 	}
 
 	// sparse -> dense
-	var hash strings.Builder
-	for i := 0; i < 16; i++ {
-		var xor byte
+	var bytes [16]byte
+	for i := range bytes {
 		for _, j := range list[i*16 : i*16+16] {
-			xor ^= j
+			bytes[i] ^= j
 		}
-		if xor < 16 {
-			hash.WriteRune('0')
-		}
-		hash.WriteString(strconv.FormatInt(int64(xor), 16))
 	}
-	return hash.String()
+	return hex.EncodeToString(bytes[:])
 }
 
 func main() {
