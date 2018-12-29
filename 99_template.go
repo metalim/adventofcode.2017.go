@@ -8,12 +8,16 @@ import (
 )
 
 var test1 = ``
-
 var test2 = ``
 
 func main() {
 	source.Dry()
-	for p := range source.Test(1, test1, `11`).Test(2, test2, `22`).Advent(2017, 99) {
+
+	var ins source.Inputs
+	ins = ins.Test(1, test1, `11`)
+	ins = ins.Test(2, test2, `22`)
+
+	for p := range ins.Advent(2017, 99) {
 		fmt.Println(Brown("\n" + p.Name))
 		ssw := p.Lines().Words()
 		fmt.Println(len(ssw), Black(ssw[0]).Bold())
