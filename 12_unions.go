@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"metalim/advent/2017/lib/source"
+	"metalim/advent/2017/lib/union"
 
 	. "github.com/logrusorgru/aurora"
 )
@@ -26,47 +27,18 @@ func main() {
 		ssn := p.Lines().Ints()
 		fmt.Println(len(ssn), Black(ssn[0:3]).Bold())
 
+		u := union.New()
+		for _, sn := range ssn {
+			u.Link(sn...)
+		}
+
 		if p.Part(1) {
-			q := []int{0}
-			seen := map[int]bool{0: true}
-			var count int
-			for len(q) > 0 {
-				n := q[0]
-				q = q[1:]
-				count++
-				for _, n2 := range ssn[n][1:] {
-					if !seen[n2] {
-						seen[n2] = true
-						q = append(q, n2)
-					}
-				}
-			}
-			p.SubmitInt(1, count)
+			p.SubmitInt(1, len(u.Unions[u.Nodes[0]]))
 		}
 
 		if p.Part(2) {
-			seen := map[int]bool{}
-			var groups int
-			for i := range ssn {
-				if seen[i] {
-					continue
-				}
-				groups++
-				q := []int{i}
-
-				for len(q) > 0 {
-					n := q[0]
-					q = q[1:]
-					for _, n2 := range ssn[n][1:] {
-						if !seen[n2] {
-							seen[n2] = true
-							q = append(q, n2)
-						}
-					}
-				}
-			}
-			p.SubmitInt(2, groups)
-
+			p.SubmitInt(2, len(u.Unions))
 		}
+
 	}
 }
