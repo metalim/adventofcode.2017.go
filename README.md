@@ -54,3 +54,7 @@ for aString := range myChan {
 ## Puzzle inputs
 
 Inputs are automatically retrieved from Advent of Code, provided you put at least one `<session-name>.cookie` into `inputs/` folder. To get the cookie, refer to website properties in your browser, after logging in into Advent of Code website.
+
+## Log
+
+Check out [LOG.md](LOG.md) for specifics of each task.
