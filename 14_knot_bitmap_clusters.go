@@ -1,65 +1,16 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"metalim/advent/2017/lib/source"
 	"metalim/advent/2017/lib/union"
 
 	"strconv"
-	"strings"
 
 	. "github.com/logrusorgru/aurora"
 )
 
 var test1 = `flqrgnkx`
-
-func hexDecode(s string) []byte {
-	bytes, err := hex.DecodeString(s)
-	if err != nil {
-		panic(err)
-	}
-	return bytes
-}
-
-func knotHash(s string) string {
-	sn := []byte(s)
-	sn = append(sn, 17, 31, 73, 47, 23)
-
-	length := 256
-	list := make([]byte, length)
-	for i := range list {
-		list[i] = byte(i)
-	}
-
-	var pos, skip int
-	for round := 0; round < 64; round++ {
-		for _, n := range sn {
-			// reverse
-			for i := 0; i < int(n/2); i++ {
-				a := (pos + i) % length
-				b := (pos + int(n) - 1 - i) % length
-				list[a], list[b] = list[b], list[a]
-			}
-			pos = (pos + int(n) + skip) % length
-			skip++
-		}
-	}
-
-	// sparse -> dense
-	var hash strings.Builder
-	for i := 0; i < 16; i++ {
-		var xor byte
-		for _, j := range list[i*16 : i*16+16] {
-			xor ^= j
-		}
-		if xor < 16 {
-			hash.WriteRune('0')
-		}
-		hash.WriteString(strconv.FormatInt(int64(xor), 16))
-	}
-	return hash.String()
-}
 
 func main() {
 	var ins source.Inputs
@@ -77,7 +28,7 @@ func main() {
 		if p.Part(1) {
 			var set int
 			for i := 0; i < dim; i++ {
-				bytes := hexDecode(knotHash(s + "-" + strconv.Itoa(i)))
+				bytes := knotHash(s + "-" + strconv.Itoa(i))
 				for _, b := range bytes {
 					for b > 0 {
 						if b&1 != 0 {
@@ -94,7 +45,7 @@ func main() {
 			var prev [dim]bool // we don't need whole bitmap, just the previous row, and union set.
 			u := union.New()
 			for y := 0; y < dim; y++ {
-				bytes := hexDecode(knotHash(s + "-" + strconv.Itoa(y)))
+				bytes := knotHash(s + "-" + strconv.Itoa(y))
 				var row [dim]bool
 				for i, b := range bytes {
 					for j := 0; j <= 7; j++ {
@@ -118,4 +69,36 @@ func main() {
 		}
 
 	}
+}
+
+func knotHash(s string) (out [16]byte) {
+	sn := []byte(s)
+	sn = append(sn, 17, 31, 73, 47, 23)
+
+	const dim = 256
+	var list [dim]byte
+	for i := range list {
+		list[i] = byte(i)
+	}
+
+	var pos, skip int
+	for round := 0; round < 64; round++ {
+		for _, n := range sn {
+			for i := 0; i < int(n/2); i++ { // reverse chunk of the circle.
+				a := (pos + i) % dim
+				b := (pos + int(n) - 1 - i) % dim
+				list[a], list[b] = list[b], list[a]
+			}
+			pos = (pos + int(n) + skip) % dim
+			skip++
+		}
+	}
+
+	// sparse -> dense
+	for i := 0; i < 16; i++ {
+		for _, j := range list[i*16 : i*16+16] {
+			out[i] ^= j
+		}
+	}
+	return
 }
