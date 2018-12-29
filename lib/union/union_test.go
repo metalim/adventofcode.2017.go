@@ -14,6 +14,11 @@ func TestLink(t *testing.T) {
 	_t = t
 	u := New()
 
+	t.Log("single node")
+	u.Link(1)
+	verify(len(u.Nodes), 1)
+	verify(len(u.Unions), 1)
+
 	t.Log("first link", u)
 	u.Link(1, 2)
 	verify(len(u.Nodes), 2)
