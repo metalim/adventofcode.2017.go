@@ -72,8 +72,8 @@ func (p Parser) Part(part int) bool {
 	return p.parts&part != 0
 }
 
-// Result without submitting.
-func (p Parser) Result(part int, v string) {
+// Submit result.
+func (p Parser) Submit(part int, v string) {
 	prefix := fmt.Sprintf("part%d:", part)
 	if p.Part(part) && part <= len(p.ex) {
 		ok := Green("✓").String()
@@ -83,15 +83,12 @@ func (p Parser) Result(part int, v string) {
 		fmt.Println(prefix, Cyan(v), ok)
 		return
 	}
-	fmt.Println(prefix, Green(v))
-}
-
-// Submit result.
-func (p Parser) Submit(part int, v string) {
-	p.Result(part, v)
-	if !dry {
-		trySubmit(p.Name, p.year, p.day, part, v)
+	if dry {
+		fmt.Println(prefix, Green(v))
+		return
 	}
+	fmt.Print(prefix, " ", Cyan(v)) // no ln
+	trySubmit(p.Name, p.year, p.day, part, v)
 }
 
 // SubmitInt result.
@@ -177,19 +174,25 @@ func trySubmit(name string, year, day, part int, v string) {
 	outkey := fmt.Sprintf("results/%d_%d_%d_%s.txt", year, day, part, name)
 	result, err := ioutil.ReadFile(outkey)
 	if err == nil {
-		fmt.Print("already submitted: ", Green(string(result)))
+		ok := Green(" ✓").String()
+		ex := string(result)
+		if v != ex {
+			ok = fmt.Sprint(Red(" ✗"), " expected: ", ex)
+		}
+		fmt.Print(ok)
 		infi, err1 := os.Stat(inkey)
 		outfi, err2 := os.Stat(outkey)
 		if err1 == nil && err2 == nil {
-			fmt.Print(" It took ", Brown(outfi.ModTime().Sub(infi.ModTime()).Round(time.Second)))
+			fmt.Print(" ", Brown(outfi.ModTime().Sub(infi.ModTime()).Round(time.Second)))
 		}
 		fmt.Println()
 		return
 	}
 
+	fmt.Println()
+
 	cookie, err := ioutil.ReadFile("results/" + name + ".cookie")
 	if err != nil { // no cookie -> no submit.
-		//fmt.Println("skipping")
 		return
 	}
 
