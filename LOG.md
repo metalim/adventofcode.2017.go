@@ -109,6 +109,15 @@
 * Data structure: circular buffer, implemented as slice with %mod.
 * Process: execution, with loop detection of visited states, calculating remaining steps.
 
+## Day 17
+
+* Input: number.
+* Data structure: **circular buffer (again!)**, implemented with linked list.
+* Option 1, brute force:
+  * Process: iterate insertion.
+* **Option 2, optimized:**
+  * Process: iterate with single position check and ignore the content.
+
 ## Day
 
 * Input:
