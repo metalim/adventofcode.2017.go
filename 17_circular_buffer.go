@@ -2,16 +2,12 @@ package main
 
 import (
 	"fmt"
-	"metalim/advent/2017/lib/debug"
 	"metalim/advent/2017/lib/source"
-	"time"
 
 	. "github.com/logrusorgru/aurora"
 )
 
 func main() {
-	// source.Dry()
-
 	var ins source.Inputs
 
 	ins = ins.Test(1, `3`, `638`)
@@ -34,27 +30,18 @@ func main() {
 		}
 
 		if p.Part(2) {
-			n := &node{val: 0}
-			n.next = n
-			var i int
-			var stop bool
-			go func() {
-				for !stop {
-					debug.Log(Black(i).Bold())
-					time.Sleep(time.Second)
-				}
-			}()
-			var after0 int
-			for i = 1; i <= 5e7; i++ {
-				n = n.skip(step)
-				if n.val == 0 {
+			var after0, pos0, pos int
+			length := 1
+			for i := 1; i <= 5e7; i++ {
+				pos = (pos + step) % length
+				if pos < pos0 {
+					pos0++
+				} else if pos == pos0 {
 					after0 = i
 				}
-				prev := n
-				n = &node{val: i, next: prev.next}
-				prev.next = n
+				pos++
+				length++
 			}
-			stop = true
 			p.SubmitInt(2, after0)
 		}
 	}
