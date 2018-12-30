@@ -103,6 +103,12 @@
 * Data structure: well, 2 numbers.
 * Process: generator iteration, %mod.
 
+## Day 16
+
+* Input: row of instructions: letters and numbers.
+* Data structure: circular buffer, implemented as slice with %mod.
+* Process: execution, with loop detection of visited states, calculating remaining steps.
+
 ## Day
 
 * Input:
