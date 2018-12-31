@@ -3,7 +3,7 @@
 ## Day 1
 
 * Input: row of digits.
-* Data structure: circular buffer, implemented with slice.
+* Data structure: **circular buffer**, implemented with slice.
 * Process: conditional sum.
 
 ## Day 2
@@ -37,7 +37,7 @@
 ## Day 6
 
 * Input: row of numbers.
-* Data structure: circular buffer, implemented with slice.
+* Data structure: **circular buffer**, implemented with slice.
 * Process: iterate over circular buffer.
 
 ## Day 7
@@ -106,17 +106,17 @@
 ## Day 16
 
 * Input: row of instructions: letters and numbers.
-* Data structure: circular buffer, implemented as slice with %mod.
+* Data structure: **circular buffer**, implemented as slice with %mod.
 * Process: execution, with loop detection of visited states, calculating remaining steps.
 
 ## Day 17
 
 * Input: number.
-* Data structure: **circular buffer (again!)**, implemented with linked list.
+* Data structure: **circular buffer (again!)**, now implemented as common circular.NewList.
 * Option 1, brute force:
-  * Process: iterate insertion.
+  * Process: iterate insertion over circular list.
 * **Option 2, optimized:**
-  * Process: iterate with single position check and ignore the content.
+  * Process: iterate single position check and ignore content of the list.
 
 ## Day
 

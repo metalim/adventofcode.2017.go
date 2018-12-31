@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"metalim/advent/2017/lib/circular"
 	"metalim/advent/2017/lib/source"
 
 	. "github.com/logrusorgru/aurora"
@@ -18,15 +19,12 @@ func main() {
 		fmt.Println(Black(step).Bold())
 
 		if p.Part(1) {
-			n := &node{val: 0}
-			n.next = n
+			n := circular.NewList(0) // circular.NewSlice(0) works too, but is slower for large number of nodes.
 			for i := 1; i <= 2017; i++ {
-				n = n.skip(step)
-				prev := n
-				n = &node{val: i, next: prev.next}
-				prev.next = n
+				n.Skip(step)
+				n.InsertAfter(i)
 			}
-			p.SubmitInt(1, n.next.val)
+			p.SubmitInt(1, n.Skip(1).Get())
 		}
 
 		if p.Part(2) {
@@ -45,16 +43,4 @@ func main() {
 			p.SubmitInt(2, after0)
 		}
 	}
-}
-
-type node struct {
-	val  int
-	next *node
-}
-
-func (n *node) skip(i int) *node {
-	for ; i > 0; i-- {
-		n = n.next
-	}
-	return n
 }
