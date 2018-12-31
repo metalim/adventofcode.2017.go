@@ -118,6 +118,17 @@
 * **Option 2, optimized:**
   * Process: iterate single position check and ignore content of the list.
 
+## Day 18
+
+* Input: list of instructions.
+* Data structure: state(register map, ip, queue) x2
+* Option 1, initial try:
+  * Process: goroutines.
+* Option 2, optimized:
+  * Process: execute single program, until locked by input.
+* **Option 3, simple, reliable:**
+  * Process: execute ticks for both programs in every iteration.
+
 ## Day
 
 * Input:
