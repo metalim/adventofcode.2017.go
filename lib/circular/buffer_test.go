@@ -72,12 +72,13 @@ func benchmarkInsertWith(b *testing.B, fn newfun) {
 	var stop bool
 	var i int
 	go func() {
+		time.Sleep(time.Second)
 		for !stop {
 			fmt.Println(Black(i).Bold())
 			time.Sleep(time.Second)
 		}
 	}()
-	for i = 0; i < b.N; i++ {
+	for i = 0; i < b.N; i += 2 {
 		l.Skip(rand.Intn(100) - 50)
 		l.InsertAfter(l.Get() + rand.Intn(1000))
 		l.Skip(rand.Intn(100) - 50)
@@ -111,6 +112,6 @@ func BenchmarkInsertList(b *testing.B) {
 	benchmarkInsertWith(b, circular.NewList)
 }
 
-func BenchmarkInsertSlice(b *testing.B) { // dies with timeout
+func BenchmarkInsertSlice(b *testing.B) { // dies with 10m timeout
 	benchmarkInsertWith(b, circular.NewSlice)
 }
