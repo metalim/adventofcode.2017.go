@@ -3,7 +3,7 @@ package circular
 // Value stored in circular.Buffer.
 type Value = int
 
-// Buffer interface. Note Buffer return values are just for chaining, not required to reset the pointer.
+// Buffer interface. Note Buffer return values are just for chaining, not required "to reset the pointer".
 type Buffer interface {
 	Skip(steps int) Buffer
 	InsertBefore(Value) Buffer
@@ -11,5 +11,7 @@ type Buffer interface {
 	Get() Value
 	Set(Value)
 	Length() int
-	// Reverse(length int) Buffer
+	Reverse(length int) Buffer
+	Pos() int
+	Goto(pos int)
 }

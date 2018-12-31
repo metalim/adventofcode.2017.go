@@ -6,7 +6,7 @@ func NewList(vals ...Value) Buffer {
 	for _, val := range vals {
 		l.InsertAfter(val)
 	}
-	l.Skip(1) // back to head
+	l.Skip(1) // back to cur
 	return l
 }
 
@@ -17,66 +17,77 @@ func (l *list) Length() int {
 
 // Skip steps.
 func (l *list) Skip(steps Value) Buffer {
-	if l.head == nil {
+	if l.cur == nil {
 		return l
 	}
 	for ; steps > 0; steps-- {
-		l.head = l.head.next
+		l.cur = l.cur.next
 	}
 	for ; steps < 0; steps++ {
-		l.head = l.head.prev
+		l.cur = l.cur.prev
 	}
 	return l
 }
 
-// InsertBefore current head.
+// InsertBefore cursor.
 func (l *list) InsertBefore(val Value) Buffer {
-	if l.head == nil {
-		l.head = &node{val: val}
-		l.head.next = l.head
-		l.head.prev = l.head
+	if l.cur == nil {
+		l.cur = &node{val: val}
+		l.cur.next = l.cur
+		l.cur.prev = l.cur
 		l.len = 1
 		return l
 	}
-	l.head = &node{val: val, next: l.head, prev: l.head.prev}
-	l.head.prev.next = l.head
-	l.head.next.prev = l.head
+	l.cur = &node{val: val, next: l.cur, prev: l.cur.prev}
+	l.cur.prev.next = l.cur
+	l.cur.next.prev = l.cur
 	l.len++
 	return l
 }
 
-// InsertAfter current head, and select it (== Skip(1) in array).
+// InsertAfter cursor, and select new node (== pos+1 in array).
 func (l *list) InsertAfter(val Value) Buffer {
-	if l.head == nil {
-		l.head = &node{val: val}
-		l.head.next = l.head
-		l.head.prev = l.head
+	if l.cur == nil {
+		l.cur = &node{val: val}
+		l.cur.next = l.cur
+		l.cur.prev = l.cur
 		l.len = 1
 		return l
 	}
-	l.head = &node{val: val, next: l.head.next, prev: l.head}
-	l.head.prev.next = l.head
-	l.head.next.prev = l.head
+	l.cur = &node{val: val, next: l.cur.next, prev: l.cur}
+	l.cur.prev.next = l.cur
+	l.cur.next.prev = l.cur
 	l.len++
 	return l
 }
 
-// Get head value.
+// Get value at cursor.
 func (l *list) Get() (val Value) {
-	if l.head == nil {
+	if l.cur == nil {
 		return
 	}
-	return l.head.val
+	return l.cur.val
 }
 
-// Set head value.
+// Set value at cursor.
 func (l *list) Set(val Value) {
-	l.head.val = val // panic if list is empty
+	l.cur.val = val // panic if list is empty
+}
+
+func (l *list) Reverse(steps int) Buffer {
+	panic("Reverse is not implemented for List. Use Slice")
+}
+func (l *list) Pos() int {
+	panic("Pos is not implemented yet.")
+}
+
+func (l *list) Goto(pos int) {
+	panic("Goto is not implemented yet.")
 }
 
 type list struct {
-	head *node
-	len  int
+	cur *node
+	len int
 }
 
 type node struct {

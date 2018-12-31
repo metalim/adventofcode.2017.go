@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"metalim/advent/2017/lib/circular"
 	"metalim/advent/2017/lib/source"
 	"strings"
 
@@ -19,25 +20,28 @@ func knotHash(s string) string {
 		list[i] = byte(i)
 	}
 
-	var pos, skip int
+	list2 := circular.NewSlice()
+	for i := 0; i < 256; i++ {
+		list2.InsertAfter(i)
+	}
+	list2.Goto(0) // back to head
+
+	var skip int
 	for round := 0; round < 64; round++ {
-		for _, n := range sn {
-			for i := 0; i < int(n/2); i++ { // reverse chunk of circle.
-				a := (pos + i) % dim
-				b := (pos + int(n) - 1 - i) % dim
-				list[a], list[b] = list[b], list[a]
-			}
-			pos = (pos + int(n) + skip) % dim
+		for _, byte := range sn {
+			n := int(byte)
+			list2.Reverse(n)
+			list2.Skip(n + skip)
 			skip++
 		}
 	}
 
 	// sparse -> dense
+	list2.Goto(0)
 	var bytes [16]byte
-	for i := range bytes {
-		for _, j := range list[i*16 : i*16+16] {
-			bytes[i] ^= j
-		}
+	for j := 0; j < dim; j++ {
+		bytes[list2.Pos()/16] ^= byte(list2.Get())
+		list2.Skip(1)
 	}
 	return hex.EncodeToString(bytes[:])
 }
