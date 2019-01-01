@@ -83,10 +83,6 @@ func (p Parser) Submit(part int, v string) {
 		fmt.Println(prefix, Cyan(v), ok)
 		return
 	}
-	if dry {
-		fmt.Println(prefix, Green(v))
-		return
-	}
 	fmt.Print(prefix, " ", Cyan(v)) // no ln
 	trySubmit(p.Name, p.year, p.day, part, v)
 }
@@ -94,6 +90,19 @@ func (p Parser) Submit(part int, v string) {
 // SubmitInt result.
 func (p Parser) SubmitInt(part, n int) {
 	p.Submit(part, strconv.Itoa(n))
+}
+
+// DrySubmit result.
+func (p Parser) DrySubmit(part int, v string) {
+	var prev bool
+	prev, dry = dry, true
+	p.Submit(part, v)
+	dry = prev
+}
+
+// DrySubmitInt result.
+func (p Parser) DrySubmitInt(part, n int) {
+	p.DrySubmit(part, strconv.Itoa(n))
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -191,6 +200,9 @@ func trySubmit(name string, year, day, part int, v string) {
 
 	fmt.Println()
 
+	if dry {
+		return
+	}
 	cookie, err := ioutil.ReadFile("results/" + name + ".cookie")
 	if err != nil { // no cookie -> no submit.
 		return
