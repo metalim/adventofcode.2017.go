@@ -10,9 +10,6 @@ import (
 // Cell z
 type Cell = int
 
-// CellDefault z
-const CellDefault = 0
-
 // Pos z
 type Pos = image.Point
 
@@ -24,11 +21,28 @@ type Field interface {
 	Get(Pos) Cell
 	Set(Pos, Cell)
 	Bounds() Rect
+	Default() Cell
+	SetDefault(Cell)
 }
 
-// FillBFS z
-func FillBFS(f Field, start Pos, fn func(Pos, Cell) Cell) {
+type field2d struct {
+	b   Rect
+	def Cell
+}
 
+// Default cell value.
+func (f *field2d) Default() Cell {
+	return f.def
+}
+
+// SetDefault cell value.
+func (f *field2d) SetDefault(c Cell) {
+	f.def = c
+}
+
+// Bounds AABB.
+func (f *field2d) Bounds() Rect {
+	return f.b
 }
 
 // Print field
@@ -74,3 +88,20 @@ func abs(n int) int {
 func Manh(p1, p2 Pos) int {
 	return abs(p1.X-p2.X) + abs(p1.Y-p2.Y)
 }
+
+/*
+// Walk on arbitrary field with callbacks for tile check, direction get, and actual step.
+func Walk(start Pos, canStepOn func(Pos) bool, walk func(Pos) bool, getDirections func(Pos, int) int) (end Pos, steps int) {
+	if !canStepOn(start) {
+		return
+	}
+	p := start
+	var d int
+	for {
+		steps++
+		p1 := DStep(p, d)
+		dirs := getDirections(p, d)
+	}
+	return p, steps
+}
+*/

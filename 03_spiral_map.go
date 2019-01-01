@@ -10,7 +10,7 @@ import (
 	. "github.com/logrusorgru/aurora"
 )
 
-type map2d = field.SliceSegmented
+type map2d = field.Slice
 
 // note: start from 0
 /*

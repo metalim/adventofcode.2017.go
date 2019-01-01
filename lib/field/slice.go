@@ -1,49 +1,40 @@
 package field
 
-import "metalim/advent/2017/lib/debug"
+import (
+	"metalim/advent/2017/lib/debug"
+	"strings"
+)
 
 type slice1d []Cell
 type slice2d []slice1d
 
-// SliceSegmented z
-type SliceSegmented struct {
+// Slice segmented to 4 sectors from the center.
+type Slice struct {
+	field2d
 	origin         Pos
-	b              Rect
 	tl, tr, bl, br slice2d
 }
 
-// Bounds z
-func (f *SliceSegmented) Bounds() Rect {
-	return f.b
-}
-
-func (f *SliceSegmented) getSegmentPos(p Pos) (x, y int, sector *slice2d) {
-	p = p.Sub(f.origin)
-	y = p.Y
-	x = p.X
-	if y >= 0 {
-		if x >= 0 {
-			return x, y, &f.br
+// FillFromString from start position.
+func (f *Slice) FillFromString(start Pos, s string) {
+	for y, l := range strings.Split(s, "\n") {
+		for x, r := range l {
+			f.Set(start.Add(Pos{x, y}), Cell(r))
 		}
-		return -x - 1, y, &f.bl
 	}
-	if x >= 0 {
-		return x, -y - 1, &f.tr
-	}
-	return -x - 1, -y - 1, &f.tl
 }
 
-// Get z
-func (f *SliceSegmented) Get(p Pos) Cell {
+// Get cell.
+func (f *Slice) Get(p Pos) Cell {
 	x, y, sec := f.getSegmentPos(p)
 	if y < len(*sec) && x < len((*sec)[y]) {
 		return (*sec)[y][x]
 	}
-	return CellDefault
+	return f.def
 }
 
-// Set z
-func (f *SliceSegmented) Set(p Pos, c Cell) {
+// Set cell.
+func (f *Slice) Set(p Pos, c Cell) {
 	if f.b.Empty() {
 		f.origin = p
 	}
@@ -72,4 +63,20 @@ func (f *SliceSegmented) Set(p Pos, c Cell) {
 		(*sec)[y] = sec2
 	}
 	(*sec)[y][x] = c
+}
+
+func (f *Slice) getSegmentPos(p Pos) (x, y int, sector *slice2d) {
+	p = p.Sub(f.origin)
+	y = p.Y
+	x = p.X
+	if y >= 0 {
+		if x >= 0 {
+			return x, y, &f.br
+		}
+		return -x - 1, y, &f.bl
+	}
+	if x >= 0 {
+		return x, -y - 1, &f.tr
+	}
+	return -x - 1, -y - 1, &f.tl
 }
