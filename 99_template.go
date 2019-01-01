@@ -8,27 +8,24 @@ import (
 )
 
 var test1 = ``
-var test2 = ``
 
 func main() {
-	source.Dry()
-
 	var ins source.Inputs
 
-	ins = ins.Test(1, test1, `11`)
-	ins = ins.Test(2, test2, `22`)
+	ins = ins.Test(1, test1, `1`)
+	// ins = ins.Test(2, test2, `2`)
 
-	for p := range ins.Advent(2017, 99) {
-		fmt.Println(Brown("\n" + p.Name))
-		ssw := p.Lines().Words()
+	for par := range ins.Advent(2017, 99) {
+		fmt.Println(Brown("\n" + par.Name))
+		ssw := par.Lines().Words()
 		fmt.Println(len(ssw), Black(ssw[0]).Bold())
 
-		if p.Part(1) {
-			p.SubmitInt(1, 1)
+		if par.Part(1) {
+			par.DrySubmitInt(1, 1)
 		}
 
-		// if p.Part(2) {
-		// 	p.SubmitInt(2, 2)
+		// if par.Part(2) {
+		// 	par.DrySubmitInt(2, 2)
 		// }
 	}
 }
