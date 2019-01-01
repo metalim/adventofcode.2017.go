@@ -15,10 +15,8 @@
 
 * Input: number.
 * Data structure: **2d map growing in all directions**, implemented as separate class.
-  * Option 1, common:
-    * map of maps.
-  * **Option 2, slightly optimized:**
-    * 4 growing slices for 4 segments!
+  1. common: map of maps.
+  2. **slightly optimized:** 4 growing slices for 4 segments!
 * Process: iterate position with direction changes.
 
 ## Day 4
@@ -79,23 +77,22 @@
 ## Day 13
 
 * Input: list of number pairs.
-* Option 1, brute force:
-  * Process: iterate each step (with direction changes) x each distance.
-* **Option 2, optimized:**
-  * Process: iterate distances with **calculated scanner positions with mod.**
-* Option 3, not implemented:
-  * Process: single distance calculation with gcd + mod.
+* Process:
+  1. brute force: iterate each step (with direction changes) x each distance.
+  2. **optimized:** iterate distances with **calculated scanner positions with mod.**
+  3. not implemented: single distance calculation with gcd + mod.
 
 ## Day 14
 
 * Input: string.
 * Process: hash func from Day 10.
-* Option 1, full iteration:
-  * Data structure: bitmap 128x128.
-  * Process: repeated flood fill (BFS or DFS).
-* **Option 2, optimized:**
-  * Data structure: bitmap 2x128
-  * Process: **find unions, by checking only 2 directions: left and up.**
+* Data structure and Process options:
+  1. full iteration:
+      * Data structure: bitmap 128x128.
+      * Process: repeated flood fill (BFS or DFS).
+  2. **optimized:**
+      * Data structure: bitmap 2x128
+      * Process: **find unions, by checking only 2 directions: left and up.**
 
 ## Day 15
 
@@ -113,21 +110,26 @@
 
 * Input: number.
 * Data structure: **circular buffer (again!)**, now implemented as common circular.NewList.
-* Option 1, brute force:
-  * Process: iterate insertion over circular list.
-* **Option 2, optimized:**
-  * Process: iterate single position check and ignore content of the list.
+* Process:
+  1. brute force: iterate insertion over circular list.
+  2. **optimized:** iterate single position check and ignore content of the list.
 
 ## Day 18
 
 * Input: list of instructions.
 * Data structure: state(register map, ip, queue) x2
-* Option 1, initial try:
-  * Process: goroutines.
-* Option 2, optimized:
-  * Process: execute single program, until locked by input.
-* **Option 3, simple, reliable:**
-  * Process: execute ticks for both programs in every iteration.
+* Process:
+  1. initial try: goroutines.
+  2. optimized: execute single program, until locked by input.
+  3. **simple, reliable:** execute ticks for both programs in every iteration.
+
+## Day 19
+
+* Input: 2d map drawn in text.
+* Data structure: 2d field, used field.Slice.
+* Process: walking on map.
+  1. custom walk.
+  2. field.Walk.
 
 ## Day
 
