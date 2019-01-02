@@ -30,6 +30,13 @@ func Log(vs ...interface{}) {
 	}
 }
 
+// Logf if Level is 1 or more.
+func Logf(format string, vs ...interface{}) {
+	if Level >= LevelLog {
+		fmt.Printf(format, vs...)
+	}
+}
+
 // Trace if Level is 2 or more.
 func Trace(vs ...interface{}) {
 	if Level >= LevelTrace {

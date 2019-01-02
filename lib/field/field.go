@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-// Cell z
+// Cell = int
 type Cell = int
 
-// Pos z
+// Pos = image.Point
 type Pos = image.Point
 
-// Rect z
+// Rect = image.Rectangle
 type Rect = image.Rectangle
 
-// Field two-dimensional.
+// Field is two-dimensional.
 type Field interface {
 	Get(Pos) Cell
 	Set(Pos, Cell)
@@ -26,6 +26,7 @@ type Field interface {
 }
 
 type field2d struct {
+	Field
 	b   Rect
 	def Cell
 }
@@ -46,7 +47,7 @@ func (f *field2d) Bounds() Rect {
 }
 
 // Print field
-func Print(f Field) {
+func (f *field2d) Print() {
 	bs := f.Bounds()
 	r := make([]string, 0, bs.Dx())
 	for y := bs.Min.Y; y < bs.Max.Y; y++ {
@@ -63,18 +64,75 @@ func Print(f Field) {
 	}
 }
 
-// Step in specified direction: 0123 -> ESWN
-func Step(p Pos, d int) Pos {
-	return Pos{p.X + (1-d)%2, p.Y + (2-d)%2}
+// Dir4 0..3 for axis aligned
+type Dir4 uint
+
+// Dir44 is Dir4 extended to 4..7 for diagonals
+type Dir44 Dir4
+
+// Dir4 and Dir44 constants
+// Since we don't define direction of Y, but only it's value,
+// P = +1, N = -1, and not North/Up or South/Down.
+const (
+	Dir4P0 Dir4 = iota
+	Dir40P
+	Dir4N0
+	Dir40N
+	Dir44PP Dir44 = iota
+	Dir44NP
+	Dir44NN
+	Dir44PN
+)
+
+// Step for backwards compatibility.
+func Step(p Pos, d4 Dir4) Pos {
+	return Step4(p, d4)
 }
 
-// DStep in specified direction, including diagonals:
-// ? var1: 01234567 -> E SE S SW W NW N NE
-// ! var2: 0123:4567 -> E S W N : SE SW NW NE
-func DStep(p Pos, d int) Pos {
-	out := Step(p, d&3)
-	if d > 3 { // diagonal? -> additional step in +1 direction.
-		out = Step(out, (d+1)&3)
+// Step4 in specified direction:
+// * 0123 -> ESWN / RDLU, for x axis to the right, and y axis down.
+// * 0123 -> ENWS / RULD, for x axis to the right, and y axis up.
+// * 4567, etc == 0123
+// == dir * 90°
+func Step4(p Pos, d4 Dir4) Pos {
+	return Pos{p.X + (1-int(d4&3))%2, p.Y + (2-int(d4&3))%2}
+}
+
+// Step44 in specified direction, including diagonals **after** the main sequence:
+// 0123:4567 -> E S W N : SE SW NW NE, so 0-3 directions mean the same as in Step.
+func Step44(p Pos, d44 Dir44) Pos {
+	out := Step(p, Dir4(d44))
+	if d44&4 != 0 { // diagonal? -> additional step in +1 direction.
+		out = Step(out, Dir4(d44+1))
+	}
+	return out
+}
+
+// Dir8 is 0..7 including diagonals: 0 1 2 3 4 5 6 7 -> E SE S SW W NW N NE
+type Dir8 uint
+
+// Dir8 constants
+const (
+	Dir8P0 Dir8 = iota
+	Dir8PP
+	Dir80P
+	Dir8NP
+	Dir8N0
+	Dir8NN
+	Dir80N
+	Dir8PN
+)
+
+// Step8 in specified direction, including diagonals **inside** main sequence:
+// 0 1 2 3 4 5 6 7 -> E SE S SW W NW N NE
+// 0246 -> ESWN
+// == dir * 45°
+// To step in axis aligned directions add steps of 2: 0 2 4 6.
+func Step8(p Pos, d8 Dir8) Pos {
+	d4 := Dir4(d8 >> 1)
+	out := Step(p, d4)
+	if d8&1 != 0 { // diagonal
+		out = Step(out, d4+1)
 	}
 	return out
 }
@@ -84,24 +142,50 @@ func abs(n int) int {
 	return (n ^ y) - y // (x ⨁ y) - y
 }
 
-// Manh distance.
+// Manh return manhattan distance between points.
 func Manh(p1, p2 Pos) int {
 	return abs(p1.X-p2.X) + abs(p1.Y-p2.Y)
 }
 
-/*
-// Walk on arbitrary field with callbacks for tile check, direction get, and actual step.
-func Walk(start Pos, canStepOn func(Pos) bool, walk func(Pos) bool, getDirections func(Pos, int) int) (end Pos, steps int) {
-	if !canStepOn(start) {
+// Walk on arbitrary 2d grid with callbacks for tile check, direction get, and actual step,
+// and return end position and distance walked.
+// Callbacks:
+// * canStepOn(p) should return true if you can Walk onto the tile.
+// * walk(p) should store path (if needed) and return true to continue walking.
+// * getDirections(p,d) should return bitmask, where each bit from bits 0-7 represents allowed direction.
+//   0 1 2 3 -> E S W N, 4 5 6 7 -> SE SW NW NE
+//   * each allowed direction will then be checked with canStepOn.
+func Walk(p Pos, d Dir8, canStepOn func(Pos) bool, step func(Pos) bool, getDirections func(Pos, Dir8) int) (end Pos, steps int) {
+	if !canStepOn(p) {
 		return
 	}
-	p := start
-	var d int
+
+WALKING:
 	for {
 		steps++
-		p1 := DStep(p, d)
-		dirs := getDirections(p, d)
+		if step(p) {
+
+			dirs := getDirections(p, d)
+
+			// start with same direction as before, then turn 45° right on each try.
+			dirs = (dirs>>d | dirs<<(8-d)) & 0xff
+			for ; dirs > 0; dirs, d = dirs>>1, (d+1)%8 {
+
+				if dirs&1 == 0 { // direction not allowed? -> skip it.
+					continue
+				}
+
+				p1 := Step8(p, d)
+				if !canStepOn(p1) { // can't step in this direction? -> skip it.
+					continue
+				}
+
+				p = p1
+				continue WALKING
+			}
+		}
+
+		// no more moves -> exit.
+		return p, steps
 	}
-	return p, steps
 }
-*/

@@ -27,52 +27,36 @@ func main() {
 		var f field.Slice
 		f.SetDefault(' ')
 		f.FillFromString(field.Pos{}, par.Val)
-		start := strings.IndexRune(par.Val, '|')
-		fmt.Printf(Black("%v, start: %d\n").Bold().String(), f.Bounds(), start)
+		startX := strings.IndexRune(par.Val, '|')
+		fmt.Printf(Black("%v, startX: %d\n").Bold().String(), f.Bounds(), startX)
 
 		var out []byte
 
-		p := field.Pos{start, 0}
-		d := 1
-		var step int
-		for {
-			step++
-			c := f.Get(p)
-			switch c {
-			case '|', '-', '+':
-			default:
+		start := field.Pos{startX, 0}
+
+		canStepOn := func(p field.Pos) bool { return f.Get(p) != ' ' }
+		step := func(p field.Pos) bool {
+			c := byte(f.Get(p))
+			if strings.IndexByte("|-+", c) == -1 {
 				out = append(out, byte(c))
 			}
-			p1 := field.Step(p, d)
-			if f.Get(p1) != ' ' {
-				p = p1
-				continue
-			}
-			if c == '+' {
-				dr := (d + 1) % 4
-				pr := field.Step(p, dr)
-				if f.Get(pr) != ' ' {
-					d = dr
-					p = pr
-					continue
-				}
-				dl := (d + 3) % 4
-				pl := field.Step(p, dl)
-				if f.Get(pl) != ' ' {
-					d = dl
-					p = pl
-					continue
-				}
-			}
-			break
+			return true
 		}
+		getDirections := func(p field.Pos, d field.Dir8) int {
+			if f.Get(p) == '+' {
+				return 1<<((d+2)&7) + 1<<((d-2)&7) // turn right or left
+			}
+			return 1 << d // continue in same direction
+		}
+		_, steps := field.Walk(start, field.Dir80P, canStepOn, step, getDirections)
 
 		if par.Part(1) {
 			par.Submit(1, string(out))
 		}
 
 		if par.Part(2) {
-			par.SubmitInt(2, step)
+			par.SubmitInt(2, steps)
 		}
+
 	}
 }
