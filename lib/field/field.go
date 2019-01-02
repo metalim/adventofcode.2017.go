@@ -25,6 +25,9 @@ type Field interface {
 	SetDefault(Cell)
 }
 
+////////////////////////////////////////////////////////////////////////
+// Base methods, can't use methods of derived classes.
+
 type field2d struct {
 	Field
 	b   Rect
@@ -46,8 +49,11 @@ func (f *field2d) Bounds() Rect {
 	return f.b
 }
 
+////////////////////////////////////////////////////////////////////////
+// Common "methods", actually functions.
+
 // Print field
-func (f *field2d) Print() {
+func Print(f Field) {
 	bs := f.Bounds()
 	r := make([]string, 0, bs.Dx())
 	for y := bs.Min.Y; y < bs.Max.Y; y++ {
@@ -63,6 +69,72 @@ func (f *field2d) Print() {
 		fmt.Println(strings.Join(r, " "))
 	}
 }
+
+// Rotate90 rectangle 90°.
+func Rotate90(f Field, rect Rect) {
+	cy := rect.Dy()
+	cx := rect.Dx()
+	if cx != cy {
+		panic("rectangle must be square!")
+	}
+	if cx%2 == 1 { // odd? -> rotate (N x N+1)/(N+1 x N) rectangles around center piece.
+		cx += 2
+	}
+	cx /= 2
+	cy /= 2
+	for y := 0; y < cy; y++ {
+		for x := 0; x < cx; x++ {
+			p1 := Pos{rect.Min.X + x, rect.Min.Y + y}
+			p2 := Pos{rect.Max.X - 1 - y, rect.Min.Y + x}
+			p3 := Pos{rect.Max.X - 1 - x, rect.Max.Y - 1 - y}
+			p4 := Pos{rect.Min.X + y, rect.Max.Y - 1 - x}
+
+			v1, v2, v3, v4 := f.Get(p1), f.Get(p2), f.Get(p3), f.Get(p4)
+			f.Set(p2, v1)
+			f.Set(p3, v2)
+			f.Set(p4, v3)
+			f.Set(p1, v4)
+		}
+	}
+}
+
+// FlipVert a rectangle.
+func FlipVert(f Field, rect Rect) {
+	dy := rect.Dy()
+	for y := 0; y < dy/2; y++ {
+		for x := rect.Min.X; x < rect.Max.X; x++ {
+			p1, p2 := Pos{x, rect.Min.Y + y}, Pos{x, rect.Max.Y - 1 - y}
+			v1, v2 := f.Get(p1), f.Get(p2)
+			f.Set(p1, v2)
+			f.Set(p2, v1)
+		}
+	}
+}
+
+// FillFromString from start position.
+func FillFromString(f Field, start Pos, s string) {
+	for y, l := range strings.Split(s, "\n") {
+		for x, r := range l {
+			f.Set(start.Add(Pos{x, y}), Cell(r))
+		}
+	}
+}
+
+// ToString rect.
+func ToString(f Field, rect Rect) string {
+	var s strings.Builder
+	for y := rect.Min.Y; y < rect.Max.Y; y++ {
+		if s.Len() > 0 {
+			s.WriteByte('\n')
+		}
+		for x := rect.Min.X; x < rect.Max.X; x++ {
+			s.WriteRune(rune(f.Get(Pos{x, y})))
+		}
+	}
+	return s.String()
+}
+
+////////////////////////////////////////////////////////////////////////
 
 // Dir4 0..3 for axis aligned
 type Dir4 uint

@@ -58,6 +58,15 @@ func (p ParserSplit) Ints() [][]int {
 	return out
 }
 
+// Split by separator.
+func (p ParserSplit) Split(sep string) [][]string {
+	out := make([][]string, 0, len(p.Values))
+	for _, l := range p.Values {
+		out = append(out, strings.Split(l, sep))
+	}
+	return out
+}
+
 // Words from []string.
 func (p ParserSplit) Words() [][]string {
 	out := make([][]string, 0, len(p.Values))

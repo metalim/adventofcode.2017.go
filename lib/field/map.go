@@ -1,7 +1,5 @@
 package field
 
-import "strings"
-
 type map1d map[int]Cell
 type map2d map[int]map1d
 
@@ -31,13 +29,4 @@ func (f *Map) Set(p Pos, c Cell) {
 		f.b = f.b.Union(Rect{p, p.Add(Pos{1, 1})})
 	}
 	f.m[p.Y][p.X] = c
-}
-
-// FillFromString from start position.
-func (f *Map) FillFromString(start Pos, s string) {
-	for y, l := range strings.Split(s, "\n") {
-		for x, r := range l {
-			f.Set(start.Add(Pos{x, y}), Cell(r))
-		}
-	}
 }

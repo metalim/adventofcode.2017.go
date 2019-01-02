@@ -2,7 +2,6 @@ package field
 
 import (
 	"metalim/advent/2017/lib/debug"
-	"strings"
 )
 
 type slice1d []Cell
@@ -13,15 +12,6 @@ type Slice struct {
 	field2d
 	origin         Pos
 	tl, tr, bl, br slice2d
-}
-
-// FillFromString from start position.
-func (f *Slice) FillFromString(start Pos, s string) {
-	for y, l := range strings.Split(s, "\n") {
-		for x, r := range l {
-			f.Set(start.Add(Pos{x, y}), Cell(r))
-		}
-	}
 }
 
 // Get cell.
@@ -64,6 +54,8 @@ func (f *Slice) Set(p Pos, c Cell) {
 	}
 	(*sec)[y][x] = c
 }
+
+////////////////////////////////////////////////////////////////////////
 
 func (f *Slice) getSegmentPos(p Pos) (x, y int, sector *slice2d) {
 	p = p.Sub(f.origin)
