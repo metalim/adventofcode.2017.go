@@ -61,8 +61,8 @@ func runTestsOn(t *testing.T, f Field) {
 	t.Log("ok")
 }
 
-func TestSliceSegmented(t *testing.T) {
-	var f SliceSegmented
+func TestSlice(t *testing.T) {
+	var f Slice
 	runTestsOn(t, &f)
 }
 
@@ -90,8 +90,8 @@ func runBenchOn(b *testing.B, f Field) {
 	}
 }
 
-func BenchmarkSliceSegmented(b *testing.B) {
-	var f SliceSegmented
+func BenchmarkSlice(b *testing.B) {
+	var f Slice
 	runBenchOn(b, &f)
 }
 
