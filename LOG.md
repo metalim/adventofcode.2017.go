@@ -141,6 +141,19 @@
   2. part1 wants particle closest **in the long term** (== in distant future), not closest in all steps.
   3. part2 collision removal was checking particles slice from part1.
 
+## Day 21
+
+* Input: list of rules (2-part strings).
+* **Option 1, slightly optimized:**
+  * Data structure: rule map, 2d state field.
+  * Process: generation of rotated rules, iteration, with expanding field.
+* Option 2, highly optimized, not implemented:
+  * Data structure: rule map converted to 3x3->9x9 rules.
+  * Process: iteration, with counting field types. No real field storage required.
+* Bugs:
+  1. rotation was implemented wrong at first. Was swapping flipping 4 sectors of the square.
+  2. missing rule. Rule pregeneration was missing adding key after flip, but before rotation.
+
 ## Day
 
 * Input:
