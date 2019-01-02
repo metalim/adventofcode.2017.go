@@ -131,6 +131,16 @@
   1. custom walk.
   2. field.Walk.
 
+## Day 20
+
+* Input: list of particles (rows with integers).
+* Data structure: 3 vec3, implemented as single slice of length 9.
+* Process: iteration, mark & sweep.
+* Bugs:
+  1. manhattan distance was calculating sum of squares, instead of sum of abs.
+  2. part1 wants particle closest **in the long term** (== in distant future), not closest in all steps.
+  3. part2 collision removal was checking particles slice from part1.
+
 ## Day
 
 * Input:
