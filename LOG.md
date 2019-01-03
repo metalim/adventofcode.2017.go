@@ -154,6 +154,12 @@
   1. rotation was implemented wrong at first. Was swapping flipping 4 sectors of the square.
   2. missing rule. Rule pregeneration was missing adding key after flip, but before rotation.
 
+## Day 22
+
+* Input: text map (lines of chars).
+* Data structure: growing 2d map, used field.Slice.
+* Process: walking on map, used field.Walk.
+
 ## Day
 
 * Input:
