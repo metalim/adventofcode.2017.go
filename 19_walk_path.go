@@ -35,20 +35,18 @@ func main() {
 		start := field.Pos{startX, 0}
 
 		canStepOn := func(p field.Pos) bool { return f.Get(p) != ' ' }
-		step := func(p field.Pos) bool {
+		stepOn := func(p field.Pos, d field.Dir8) int {
 			c := byte(f.Get(p))
 			if strings.IndexByte("|-+", c) == -1 {
 				out = append(out, byte(c))
 			}
-			return true
-		}
-		getDirections := func(p field.Pos, d field.Dir8) int {
+
 			if f.Get(p) == '+' {
 				return 1<<((d+2)&7) + 1<<((d-2)&7) // turn right or left
 			}
 			return 1 << d // continue in same direction
 		}
-		_, steps := field.Walk(start, field.Dir80P, canStepOn, step, getDirections)
+		_, steps := field.Walk(start, field.Dir80P, canStepOn, stepOn)
 
 		if par.Part(1) {
 			par.Submit(1, string(out))
