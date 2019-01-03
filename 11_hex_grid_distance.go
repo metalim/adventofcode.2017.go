@@ -18,7 +18,7 @@ func main() {
 
 	for par := range ins.Advent(2017, 11) {
 		fmt.Println(Brown("\n" + par.Name))
-		sw := par.Lines().Split(",").Values
+		sw := par.Split(",").Values
 		fmt.Println(len(sw), Black(sw[:4]).Bold())
 
 		var x, y, z, d, max int

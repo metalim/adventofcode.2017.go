@@ -21,10 +21,10 @@ type map2d = field.Slice
 20 21 22 23 24
 */
 func walkSpiral(f field.Field, fn func(int, field.Pos) bool) field.Pos {
-	d := 0 // turn in this direction if possible.
+	var d field.Dir4 // turn in this direction if possible.
 	p := field.Pos{0, 0}
 	for i := 0; fn(i, p); i++ {
-		if f.Get(field.Step(p, d)) == 0 {
+		if f.Get(field.Step4(p, d)) == 0 {
 			d = (d + 3) & 3 // turn left.
 		}
 		p = field.Step(p, (d+1)%4)
@@ -63,8 +63,8 @@ func main() {
 					return true
 				}
 				sum := 0
-				for i := 0; i < 8; i++ {
-					sum += f.Get(field.DStep(p, i))
+				for d := field.Dir8(0); d < 8; d++ {
+					sum += f.Get(field.Step8(p, d))
 				}
 				f.Set(p, sum)
 				return sum <= n

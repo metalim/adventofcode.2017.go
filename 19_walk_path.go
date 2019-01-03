@@ -26,7 +26,7 @@ func main() {
 		fmt.Println(Brown("\n" + par.Name))
 		var f field.Slice
 		f.SetDefault(' ')
-		f.FillFromString(field.Pos{}, par.Val)
+		field.FillFromString(&f, field.Pos{}, par.Val)
 		startX := strings.IndexRune(par.Val, '|')
 		fmt.Printf(Black("%v, startX: %d\n").Bold().String(), f.Bounds(), startX)
 
