@@ -50,6 +50,10 @@ func (f *Slice) Set(p Pos, c Cell) {
 		debug.Trace("growing 1d", len((*sec)[y]), "to", grow, "and", cap((*sec)[y]), "to", grow)
 		sec2 := make(slice1d, grow)
 		copy(sec2, (*sec)[y])
+		tail := sec2[len((*sec)[y]):]
+		for i := range tail {
+			tail[i] = f.def
+		}
 		(*sec)[y] = sec2
 	}
 	(*sec)[y][x] = c
