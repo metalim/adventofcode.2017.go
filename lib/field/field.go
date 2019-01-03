@@ -227,7 +227,7 @@ func Manh(p1, p2 Pos) int {
 // * getDirections(p,d) should return bitmask, where each bit from bits 0-7 represents allowed direction.
 //   0 1 2 3 -> E S W N, 4 5 6 7 -> SE SW NW NE
 //   * each allowed direction will then be checked with canStepOn.
-func Walk(p Pos, d Dir8, canStepOn func(Pos) bool, step func(Pos) bool, getDirections func(Pos, Dir8) int) (end Pos, steps int) {
+func Walk(p Pos, d Dir8, canStepOn func(Pos) bool, stepOn func(Pos, Dir8) int) (end Pos, steps int) {
 	if !canStepOn(p) {
 		return
 	}
@@ -235,10 +235,8 @@ func Walk(p Pos, d Dir8, canStepOn func(Pos) bool, step func(Pos) bool, getDirec
 WALKING:
 	for {
 		steps++
-		if step(p) {
-
-			dirs := getDirections(p, d)
-
+		dirs := stepOn(p, d)
+		if dirs != 0 {
 			// start with same direction as before, then turn 45° right on each try.
 			dirs = (dirs>>d | dirs<<(8-d)) & 0xff
 			for ; dirs > 0; dirs, d = dirs>>1, (d+1)%8 {

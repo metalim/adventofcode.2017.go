@@ -33,11 +33,8 @@ func main() {
 			var infected, istep int
 
 			canStepOn := func(field.Pos) bool { return true }
-			stepOn := func(p field.Pos) bool {
+			stepOn := func(p field.Pos, d field.Dir8) int {
 				istep++
-				return true
-			}
-			getDirs := func(p field.Pos, d field.Dir8) int {
 				v0 := f.Get(p)
 				v := int('.')
 				if v0 == '.' {
@@ -54,7 +51,7 @@ func main() {
 				}
 				return 1 << ((d + 6) & 7) // prev clean -> left
 			}
-			field.Walk(start, field.Dir80N, canStepOn, stepOn, getDirs)
+			field.Walk(start, field.Dir80N, canStepOn, stepOn)
 
 			par.SubmitInt(1, infected)
 		}
@@ -70,11 +67,8 @@ func main() {
 			var infected, istep int
 
 			canStepOn := func(field.Pos) bool { return true }
-			stepOn := func(p field.Pos) bool {
+			stepOn := func(p field.Pos, d field.Dir8) int {
 				istep++
-				return true
-			}
-			getDirs := func(p field.Pos, d field.Dir8) int {
 				v0 := f.Get(p)
 				var v, dirs int
 				switch v0 {
@@ -101,7 +95,7 @@ func main() {
 				}
 				return dirs
 			}
-			field.Walk(start, field.Dir80N, canStepOn, stepOn, getDirs)
+			field.Walk(start, field.Dir80N, canStepOn, stepOn)
 
 			par.SubmitInt(2, infected)
 		}
