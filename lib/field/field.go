@@ -154,6 +154,10 @@ const (
 	Dir44NP
 	Dir44NN
 	Dir44PN
+	Dir4Mask  = 3
+	Dir44Mask = 7
+	Dir4All   = 0x0f
+	Dir44All  = 0xff
 )
 
 // Step for backwards compatibility.
@@ -167,7 +171,7 @@ func Step(p Pos, d4 Dir4) Pos {
 // * 4567, etc == 0123
 // == dir * 90°
 func Step4(p Pos, d4 Dir4) Pos {
-	return Pos{p.X + (1-int(d4&3))%2, p.Y + (2-int(d4&3))%2}
+	return Pos{p.X + (1-int(d4&Dir4Mask))%2, p.Y + (2-int(d4&Dir4Mask))%2}
 }
 
 // Step44 in specified direction, including diagonals **after** the main sequence:
@@ -193,6 +197,8 @@ const (
 	Dir8NN
 	Dir80N
 	Dir8PN
+	Dir8Mask = 7
+	Dir8All  = 0xff
 )
 
 // Step8 in specified direction, including diagonals **inside** main sequence:
@@ -202,9 +208,9 @@ const (
 // To step in axis aligned directions add steps of 2: 0 2 4 6.
 func Step8(p Pos, d8 Dir8) Pos {
 	d4 := Dir4(d8 >> 1)
-	out := Step(p, d4)
+	out := Step4(p, d4)
 	if d8&1 != 0 { // diagonal
-		out = Step(out, d4+1)
+		out = Step4(out, d4+1)
 	}
 	return out
 }
@@ -228,17 +234,20 @@ func Manh(p1, p2 Pos) int {
 //   0 1 2 3 -> E S W N, 4 5 6 7 -> SE SW NW NE
 //   * each allowed direction will then be checked with canStepOn.
 func Walk(p Pos, d Dir8, canStepOn func(Pos) bool, stepOn func(Pos, Dir8) int) (end Pos, steps int) {
-	if !canStepOn(p) {
+	if canStepOn != nil && !canStepOn(p) {
 		return
 	}
 
 WALKING:
 	for {
 		steps++
-		dirs := stepOn(p, d)
+		dirs := Dir8All
+		if stepOn != nil {
+			dirs = stepOn(p, d)
+		}
 		if dirs != 0 {
 			// start with same direction as before, then turn 45° right on each try.
-			dirs = (dirs>>d | dirs<<(8-d)) & 0xff
+			dirs = (dirs>>d | dirs<<(8-d)) & Dir8All
 			for ; dirs > 0; dirs, d = dirs>>1, (d+1)%8 {
 
 				if dirs&1 == 0 { // direction not allowed? -> skip it.
@@ -246,7 +255,7 @@ WALKING:
 				}
 
 				p1 := Step8(p, d)
-				if !canStepOn(p1) { // can't step in this direction? -> skip it.
+				if canStepOn != nil && !canStepOn(p1) { // can't step in this direction? -> skip it.
 					continue
 				}
 

@@ -32,26 +32,29 @@ func main() {
 
 			var infected, istep int
 
-			canStepOn := func(field.Pos) bool { return true }
 			stepOn := func(p field.Pos, d field.Dir8) int {
 				istep++
 				v0 := f.Get(p)
-				v := int('.')
-				if v0 == '.' {
-					v = '#'
+				var v, dirs int
+				switch v0 {
+				case '#':
+					v = '.'
+					dirs = 1 << ((d + 2) & 7) // prev infected -> right
+				case '.':
 					infected++
+					v = '#'
+					dirs = 1 << ((d + 6) & 7) // prev clean -> left
+				default:
+					log.Fatal("unkown cell value", string(v0))
 				}
 				f.Set(p, v)
 
 				if istep == 1e4 {
 					return 0
 				}
-				if v0 == '#' {
-					return 1 << ((d + 2) & 7) // prev infected -> right
-				}
-				return 1 << ((d + 6) & 7) // prev clean -> left
+				return dirs
 			}
-			field.Walk(start, field.Dir80N, canStepOn, stepOn)
+			field.Walk(start, field.Dir80N, nil, stepOn)
 
 			par.SubmitInt(1, infected)
 		}
@@ -66,7 +69,6 @@ func main() {
 
 			var infected, istep int
 
-			canStepOn := func(field.Pos) bool { return true }
 			stepOn := func(p field.Pos, d field.Dir8) int {
 				istep++
 				v0 := f.Get(p)
@@ -95,7 +97,7 @@ func main() {
 				}
 				return dirs
 			}
-			field.Walk(start, field.Dir80N, canStepOn, stepOn)
+			field.Walk(start, field.Dir80N, nil, stepOn)
 
 			par.SubmitInt(2, infected)
 		}
