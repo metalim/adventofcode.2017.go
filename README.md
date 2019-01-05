@@ -18,38 +18,43 @@ For list of quirks found previously, refer to [README of my Go solutions to year
 
 * ### To create custom iterators/generators, channels come in handy
 
-```go
-myString := "a string with Unicode ⅀😃😉🎄❤"
-fmt.Println("\niterate over string, 1 Unicode rune at time. Note byteIndex is not continuous.")
-for byteIndex, aRune := range myString {
-  fmt.Println(byteIndex, string(aRune))
-}
+  ```go
+  myString := "a string with Unicode ⅀😃😉🎄❤"
+  fmt.Println("\niterate over string, 1 Unicode rune at time. Note byteIndex is not continuous.")
+  for byteIndex, aRune := range myString {
+    fmt.Println(byteIndex, string(aRune))
+  }
 
-mySlice := []string{"hello", "world"}
-fmt.Println("\niterate over slice")
-for index, value := range mySlice {
-  fmt.Println(index, value)
-}
+  mySlice := []string{"hello", "world"}
+  fmt.Println("\niterate over slice")
+  for index, value := range mySlice {
+    fmt.Println(index, value)
+  }
 
-myMap := map[string]int{"a": 15, "c": 19}
-fmt.Println("\niterate over map")
-for key, value := range myMap {
-  fmt.Println(key, value)
-}
+  myMap := map[string]int{"a": 15, "c": 19}
+  fmt.Println("\niterate over map")
+  for key, value := range myMap {
+    fmt.Println(key, value)
+  }
 
-myChan := make(chan string)
-go func() {
-  myChan <- "Hello"
-  myChan <- "World!"
-  // generate values on demand. Then close the channel to end iteration.
-  close(myChan)
-}()
+  myChan := make(chan string)
+  go func() {
+    myChan <- "Hello"
+    myChan <- "World!"
+    // generate values on demand. Then close the channel to end iteration.
+    close(myChan)
+  }()
 
-fmt.Println("\niterate over channel")
-for aString := range myChan {
-  fmt.Println(aString)
-}
-```
+  fmt.Println("\niterate over channel")
+  for aString := range myChan {
+    fmt.Println(aString)
+  }
+  ```
+
+* ### inheritance is hard.
+
+  For example you want 2d grid base class with common methods, and implementation details in derived classes. In C++ you just create base class with virtual methods for impl.
+  In Go you create base interface with method signatures, but can't add common methods. Instead you write functions, that recieve interface, and work as external functions.
 
 ## Puzzle inputs
 
