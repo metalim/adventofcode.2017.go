@@ -245,7 +245,7 @@ func trySubmit(name string, year, day, part int, v string) {
 	buf, err := ioutil.ReadAll(resp.Body)
 	check(err)
 	html := string(buf)
-	reg := regexp.MustCompile("(?s)<main>\\s*<article><p>(.*)</p></article>\\s*</main>")
+	reg := regexp.MustCompile("(?s)<main>\\s*<article>\\s*<p>(.*)</p>\\s*</article>\\s*</main>")
 	m := reg.FindStringSubmatch(html)
 	main := html
 	if len(m) > 1 {
@@ -285,6 +285,11 @@ func trySubmit(name string, year, day, part int, v string) {
 		return
 	}
 
+	if strings.Contains(main, "Congratulations!  You've finished every puzzle") {
+		fmt.Println(Green("Congratulations!  You've finished every puzzle in this year."))
+		ioutil.WriteFile(outkey, []byte(v), 600)
+		return
+	}
 	// some unknown response.
 	ioutil.WriteFile(outkey+".err.txt", []byte(main), 600)
 	fmt.Println("main:", main)
