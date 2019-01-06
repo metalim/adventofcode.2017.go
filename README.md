@@ -1,4 +1,4 @@
-# Advent of Code 2018 in Go
+# Advent of Code 2017 in Go
 
 These are my soluions for [Advent of Code 2017](https://adventofcode.com/2017/) written in Go.
 

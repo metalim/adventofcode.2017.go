@@ -179,8 +179,12 @@
   * Structure: common Graph.
   * Process: DFS, done with graph.IteratePathsFrom.
 
-## Day
+## Day 25
 
-* Input:
-* Structure:
-* Process:
+* Input: list of multiline instructions for each state of Turing machine.
+* Structure: tape, implemented as:
+  * Option 1, quick write: vanilla map - slow in general.
+  * Option 2, optimized for the task: double slice, left and right from 0, implemented as common turing.Tape.
+* Process: execute state instructions, inc/dec tape position, in the end: count 1's on tape.
+
+## The end
