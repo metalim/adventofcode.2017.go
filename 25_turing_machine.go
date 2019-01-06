@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"metalim/advent/2017/lib/source"
+	"metalim/advent/2017/lib/turing"
 	"strconv"
 
 	. "github.com/logrusorgru/aurora"
@@ -49,35 +50,39 @@ func main() {
 		for len(ssw) > 0 {
 			ins := ssw[1][len(ssw[1])-1]
 
+			// assuming ssw[2] is 0.
 			v1, _ := strconv.Atoi(ssw[3][len(ssw[3])-1])
 			l1 := ssw[4][len(ssw[4])-1] == "left"
-			st1 := ssw[5][len(ssw[5])-1]
+			s1 := ssw[5][len(ssw[5])-1]
 
+			// assuming ssw[6] is 1.
 			v2, _ := strconv.Atoi(ssw[7][len(ssw[7])-1])
 			l2 := ssw[8][len(ssw[8])-1] == "left"
-			st2 := ssw[9][len(ssw[9])-1]
+			s2 := ssw[9][len(ssw[9])-1]
 
-			rules[ins] = [2]cmd{{v1, l1, st1}, {v2, l2, st2}}
+			rules[ins] = [2]cmd{{v1, l1, s1}, {v2, l2, s2}}
 			ssw = ssw[10:]
 		}
 
-		tape := tape{}
+		t := turing.Tape{}
 
+		// execute.
 		for ; n > 0; n-- {
-			c := rules[state][tape.get()]
-			tape.set(c.v)
+			c := rules[state][t.Get()]
+			t.Set(c.v)
 			if c.l {
-				tape.left()
+				t.Left()
 			} else {
-				tape.right()
+				t.Right()
 			}
-			state = c.st
+			state = c.s
 		}
 
+		// count checksum.
 		var sum int
-		l, r := tape.bounds()
+		l, r := t.Bounds()
 		for ; l <= r; l++ {
-			if tape.getAt(l) == 1 {
+			if t.GetAt(l) == 1 {
 				sum++
 			}
 		}
@@ -92,63 +97,7 @@ func main() {
 ////////////////////////////////////////////////////////////////////////
 
 type cmd struct {
-	v  int
-	l  bool
-	st string
-}
-
-////////////////////////////////////////////////////////////////////////
-
-type tape struct {
-	d [2][]int
-	p int
-}
-
-func (t *tape) sel(p int) (int, int) {
-	if p < 0 {
-		return 1, -p - 1
-	}
-	return 0, p
-}
-
-// getAt - for iteration.
-func (t *tape) getAt(pos int) int {
-	i, p := t.sel(pos)
-	if p < len(t.d[i]) {
-		return t.d[i][p]
-	}
-	return 0
-}
-
-func (t *tape) get() int {
-	return t.getAt(t.p)
-}
-
-func (t *tape) set(v int) {
-	i, p := t.sel(t.p)
-	if p >= len(t.d[i]) {
-		t.d[i] = append(t.d[i], make([]int, p+1-len(t.d[i]))...) // extra space
-	}
-	t.d[i][p] = v
-}
-
-func (t *tape) left() {
-	t.p--
-}
-
-func (t *tape) right() {
-	t.p++
-}
-
-func (t *tape) go2(p int) {
-	t.p = p
-}
-
-func (t *tape) goRight(d int) {
-	t.p += d
-}
-
-// bounds inclusive
-func (t *tape) bounds() (int, int) {
-	return -len(t.d[1]), len(t.d[0]) - 1
+	v int
+	l bool
+	s string
 }
