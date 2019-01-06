@@ -60,24 +60,24 @@ func main() {
 			rules[ins] = [2]cmd{{v1, l1, st1}, {v2, l2, st2}}
 			ssw = ssw[10:]
 		}
-		fmt.Println(string(state), n)
 
-		tape := map[int]int{}
-		var p int
+		tape := tape{}
 
 		for ; n > 0; n-- {
-			c := rules[state][tape[p]]
-			tape[p] = c.v
+			c := rules[state][tape.get()]
+			tape.set(c.v)
 			if c.l {
-				p--
+				tape.left()
 			} else {
-				p++
+				tape.right()
 			}
 			state = c.st
 		}
+
 		var sum int
-		for _, v := range tape {
-			if v == 1 {
+		l, r := tape.bounds()
+		for ; l <= r; l++ {
+			if tape.getAt(l) == 1 {
 				sum++
 			}
 		}
@@ -100,34 +100,36 @@ type cmd struct {
 ////////////////////////////////////////////////////////////////////////
 
 type tape struct {
-	s [2][]bool
+	d [2][]int
 	p int
 }
 
-func (t *tape) get() bool {
-	i := 0
-	p := t.p
+func (t *tape) sel(p int) (int, int) {
 	if p < 0 {
-		p = -p - 1
-		i = 1
+		return 1, -p - 1
 	}
-	if p < len(t.s[i]) {
-		return t.s[i][p]
-	}
-	return false
+	return 0, p
 }
 
-func (t *tape) set(v bool) {
-	i := 0
-	p := t.p
-	if p < 0 {
-		p = -p - 1
-		i = 1
+// getAt - for iteration.
+func (t *tape) getAt(pos int) int {
+	i, p := t.sel(pos)
+	if p < len(t.d[i]) {
+		return t.d[i][p]
 	}
-	if p < len(t.s[i]) {
-		t.s[i] = append(t.s[i], make([]bool, p)...) // extra space
+	return 0
+}
+
+func (t *tape) get() int {
+	return t.getAt(t.p)
+}
+
+func (t *tape) set(v int) {
+	i, p := t.sel(t.p)
+	if p >= len(t.d[i]) {
+		t.d[i] = append(t.d[i], make([]int, p+1-len(t.d[i]))...) // extra space
 	}
-	t.s[i][p] = v
+	t.d[i][p] = v
 }
 
 func (t *tape) left() {
@@ -136,4 +138,17 @@ func (t *tape) left() {
 
 func (t *tape) right() {
 	t.p++
+}
+
+func (t *tape) go2(p int) {
+	t.p = p
+}
+
+func (t *tape) goRight(d int) {
+	t.p += d
+}
+
+// bounds inclusive
+func (t *tape) bounds() (int, int) {
+	return -len(t.d[1]), len(t.d[0]) - 1
 }
