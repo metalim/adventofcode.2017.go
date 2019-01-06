@@ -51,7 +51,7 @@ For list of quirks found previously, refer to [README of my Go solutions to year
   }
   ```
 
-* ### inheritance is hard.
+* ### inheritance is hard
 
   For example you want 2d grid base class with common methods, and implementation details in derived classes. In C++ you just create base class with virtual methods for impl.
   In Go you create base interface with method signatures, but can't add common methods. Instead you write functions, that recieve interface, and work as external functions.

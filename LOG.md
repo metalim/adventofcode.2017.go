@@ -71,7 +71,7 @@
 ## Day 12
 
 * Input: list of node links (rows of numbers).
-* Structure: **unions!** OMG, they are so useful!
+* Structure: **unions!** OMG, they are so useful! Implemented as common union.New().
 * Process: merging unions.
 
 ## Day 13
@@ -187,4 +187,17 @@
   * Option 2, optimized for the task: double slice, left and right from 0, implemented as common turing.Tape.
 * Process: execute state instructions, inc/dec tape position, in the end: count 1's on tape.
 
-## The end
+## In total
+
+* New common structures:
+  * field.Field - 2d field interface.
+    * field.Map - faster for sparce data.
+    * field.Slice - 2d slice field, growing in all directions. Faster for compact/filled data.
+  * union.New() - find unions of linked nodes.
+  * circular.Buffer - looped buffer interface.
+    * circular.NewList() - faster for random insertions.
+    * circular.NewSlice() - faster for fixed size chunks.
+  * graph.NewGraph() - graph with DFS with callback, with arbitrary data storage for every link and node.
+  * turing.Tape - tape for Turing machine.
+
+## The end of 2017 puzzles
