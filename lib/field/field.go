@@ -28,24 +28,23 @@ type Field interface {
 ////////////////////////////////////////////////////////////////////////
 // Base methods, can't use methods of derived classes.
 
-type field2d struct {
-	Field
+type fieldBase struct {
 	b   Rect
 	def Cell
 }
 
 // Default cell value.
-func (f *field2d) Default() Cell {
+func (f *fieldBase) Default() Cell {
 	return f.def
 }
 
 // SetDefault cell value.
-func (f *field2d) SetDefault(c Cell) {
+func (f *fieldBase) SetDefault(c Cell) {
 	f.def = c
 }
 
 // Bounds AABB.
-func (f *field2d) Bounds() Rect {
+func (f *fieldBase) Bounds() Rect {
 	return f.b
 }
 

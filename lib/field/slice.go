@@ -9,7 +9,7 @@ type slice2d []slice1d
 
 // Slice segmented to 4 sectors from the center.
 type Slice struct {
-	field2d
+	fieldBase
 	origin         Pos
 	tl, tr, bl, br slice2d
 }

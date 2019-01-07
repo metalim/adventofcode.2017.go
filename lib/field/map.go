@@ -5,7 +5,7 @@ type map2d map[int]map1d
 
 // Map z
 type Map struct {
-	field2d
+	fieldBase
 	m map2d
 }
 

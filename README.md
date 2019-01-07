@@ -70,29 +70,8 @@ For list of quirks found previously, refer to [README of my Go solutions to year
 
   // Commond data and base methods, can't call methods of derived classes.
   type fieldBase struct {
-    Field
     b   Rect
     def Cell
-  }
-
-  // Map based 2d field.
-  type Map struct {
-    fieldBase
-    // ... implementation details.
-  }
-
-  // Slice based 2d field.
-  type Slice struct {
-    fieldBase
-    // ... implementation details.
-  }
-
-  func (f *Map) Get(p Pos) Cell {
-    //... implementation details.
-  }
-
-  func (f *Slice) Get(p Pos) Cell {
-    //... implementation details.
   }
 
   // Default cell value.
@@ -110,13 +89,44 @@ For list of quirks found previously, refer to [README of my Go solutions to year
     return f.b
   }
 
-  // Common "methods" that use implementation methods are actually external functions.
+  // Common "methods" that use interface methods are actually external functions.
 
   // Print field
   func Print(f Field) {
     // ...
   }
 
+  //////////////////////////////////////////////////////////////
+
+  // Map based 2d field.
+  type Map struct {
+    fieldBase
+    // ... implementation details.
+  }
+
+  func (f *Map) Get(p Pos) Cell {
+    //... implementation details.
+  }
+  ```
+
+  Another option is to include interface into base class, but remember that **interface is just a pointer**, and it needs to be initialized, or else you'll get panics with nil-pointer dereference:
+
+  ```go
+  type fieldBase struct {
+    Field
+  }
+
+  // Print the field.
+  func (f *fieldBase) Print() {
+    // ... use f.Get here
+  }
+
+  // NewMap is required to initialize interface in base class.
+  func NewMap() Field {
+    f := &Map{}
+    f.Field = f // store pointer to the Map object in base class. Failing to do so will lead to panics.
+    return f
+  }
   ```
 
 ## Puzzle inputs
