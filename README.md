@@ -51,10 +51,73 @@ For list of quirks found previously, refer to [README of my Go solutions to year
   }
   ```
 
-* ### inheritance is hard
+* ### Classical inheritance is hard
 
-  For example you want 2d grid base class with common methods, and implementation details in derived classes. In C++ you just create base class with virtual methods for impl.
+  For example you want 2d grid base class with common methods, and implementation details in derived classes. In C++ you just create base class with virtual methods for implementation.
   In Go you create base interface with method signatures, but can't add common methods. Instead you write functions, that recieve interface, and work as external functions.
+
+  ```go
+  package field
+
+  // Field is two-dimensional.
+  type Field interface {
+    Get(Pos) Cell
+    Set(Pos, Cell)
+    Bounds() Rect
+    Default() Cell
+    SetDefault(Cell)
+  }
+
+  // Commond data and base methods, can't call methods of derived classes.
+  type fieldBase struct {
+    Field
+    b   Rect
+    def Cell
+  }
+
+  // Map based 2d field.
+  type Map struct {
+    fieldBase
+    // ... implementation details.
+  }
+
+  // Slice based 2d field.
+  type Slice struct {
+    fieldBase
+    // ... implementation details.
+  }
+
+  func (f *Map) Get(p Pos) Cell {
+    //... implementation details.
+  }
+
+  func (f *Slice) Get(p Pos) Cell {
+    //... implementation details.
+  }
+
+  // Default cell value.
+  func (f *fieldBase) Default() Cell {
+    return f.def
+  }
+
+  // SetDefault cell value.
+  func (f *fieldBase) SetDefault(c Cell) {
+    f.def = c
+  }
+
+  // Bounds AABB.
+  func (f *fieldBase) Bounds() Rect {
+    return f.b
+  }
+
+  // Common "methods" that use implementation methods are actually external functions.
+
+  // Print field
+  func Print(f Field) {
+    // ...
+  }
+
+  ```
 
 ## Puzzle inputs
 
@@ -63,3 +126,18 @@ Inputs are automatically retrieved from Advent of Code, provided you put at leas
 ## Log
 
 Check out [LOG.md](LOG.md) for specifics of each task.
+
+## Results
+
+* New common structures:
+  * field.Field - 2d field interface.
+    * field.Map - faster for sparce data.
+    * field.Slice - 2d slice field, growing in all directions. Faster for compact/filled data.
+  * union.New() - find unions of linked nodes.
+  * circular.Buffer - looped buffer interface.
+    * circular.NewList() - faster for random insertions.
+    * circular.NewSlice() - faster for fixed size chunks.
+  * graph.NewGraph() - graph with DFS with callback, with arbitrary data storage for every link and node.
+  * turing.Tape - tape for Turing machine.
+
+## The end of 2017 puzzles
